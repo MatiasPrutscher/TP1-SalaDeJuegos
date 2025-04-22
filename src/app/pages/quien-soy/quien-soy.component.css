@@ -1,0 +1,59 @@
+.background-image {
+  position: fixed;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(to bottom, transparent 10%, rgba(0, 0, 0, 0.8) 90%), 
+  url('../../../assets/background-image.gif');
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.quien-soy-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  padding: 40px;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.6);
+  border-radius: 10px;
+  color: #fff;
+  text-align: center;
+}
+
+.quien-soy-box h1 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #03e9f4;
+}
+
+.quien-soy-box img.avatar {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  margin-bottom: 20px;
+  border: 3px solid #03e9f4;
+}
+
+.quien-soy-box p {
+  margin: 10px 0;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.quien-soy-box h2 {
+  margin-top: 30px;
+  font-size: 20px;
+  color: #03e9f4;
+}
+
+.quien-soy-box p:last-child {
+  margin-top: 10px;
+  font-size: 16px;
+  color: #ccc;
+}

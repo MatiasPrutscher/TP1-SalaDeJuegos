@@ -1,0 +1,19 @@
+<div class="background-image"></div>
+<div class="quien-soy-box">
+  @if (userData) {
+    <div>
+      <h1>{{ userData.name }}</h1>
+      <img [src]="userData.avatar_url" alt="Avatar" width="150" />
+      <p><strong>Bio:</strong> {{ userData.bio }}</p>
+      <p><strong>Ubicacion:</strong> {{ userData.location }}</p>
+      <p><strong>Repositorios:</strong> {{ userData.public_repos }}</p>
+    </div>
+  } @else {
+    <ng-template #loading>
+      <p>Cargando datos...</p>
+    </ng-template>
+  }
+
+  <h2>Mi Juego Propio</h2>
+  <p>El juego que planeo desarrollar es un juego estilo Galaga.</p>
+</div>

@@ -1,0 +1,75 @@
+.toggle-btn {
+  position: fixed; /* Fijo en la pantalla */
+  top: 10px;
+  left: 10px; /* Siempre visible en la esquina izquierda */
+  background-color: #3333337c;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  z-index: 1000; /* Asegura que esté por encima de otros elementos */
+  transition: background-color 0.3s;
+}
+
+.toggle-btn:hover {
+  background-color: #575757;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 200px;
+  height: 100%;
+  background-color: rgba(51, 51, 51, 0.8); /* Semitransparente */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
+  transition: width 0.3s ease, opacity 0.3s ease;
+}
+
+.sidebar.collapsed {
+  width: 60px; /* Ancho reducido */
+  opacity: 0; /* Totalmente transparente */
+  pointer-events: none; /* Desactiva la interacción */
+}
+
+.sidebar a {
+  display: block;
+  width: 90%; /* Ocupa casi todo el ancho de la sidebar */
+  color: white;
+  text-decoration: none;
+  margin: 10px 0;
+  padding: 12px 20px;
+  text-align: center;
+  border-radius: 25px; /* Bordes redondeados */
+  background-color: #4a4a4a; /* Color base del botón */
+  transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s; /* Transiciones suaves */
+  font-size: 16px; /* Tamaño de fuente */
+  font-weight: bold; /* Negrita */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+}
+
+.sidebar a:hover {
+  background-color: #575757; /* Color al pasar el cursor */
+  transform: scale(1.05); /* Efecto de agrandamiento */
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
+}
+
+.sidebar a:active {
+  background-color: #333; /* Color al hacer clic */
+  transform: scale(0.95); /* Efecto de reducción */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra más pequeña */
+}
+
+.content {
+  margin-left: 200px;
+  padding: 20px;
+  transition: margin-left 0.3s ease;
+}
+
+.sidebar.collapsed ~ .content {
+  margin-left: 60px; /* Ajusta el margen cuando la sidebar está colapsada */
+}
