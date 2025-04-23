@@ -192,6 +192,15 @@ button:hover {
   padding: 20px;
   gap: 20px;
   background: transparent; 
+  transition: margin-left 0.3s ease; 
+}
+
+.sidebar-expanded ~ .content .cards-container {
+  margin-left: 200px;
+}
+
+.sidebar-collapsed ~ .content .cards-container {
+  margin-left: 60px; 
 }
 
 .card {

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { YoutubeService } from './services/youtube.service';
+import { SidebarService } from './services/sidebar.service';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -9,11 +10,18 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  isCollapsed = true;
+  isCollapsed = false;
   public currentVolume: number = 50; // Volumen inicial (50%)
   public songTitle: string = 'Cargando canción...'; // Nombre de la canción
 
-  constructor(private youtubeService: YoutubeService) {}
+  constructor(
+    private youtubeService: YoutubeService,
+    private sidebarService: SidebarService
+  ) {
+    this.sidebarService.isCollapsed$.subscribe(
+      (state) => (this.isCollapsed = state)
+    );
+  }
 
   async ngOnInit(): Promise<void> {
     await this.youtubeService.initializePlayer();
@@ -58,7 +66,7 @@ export class AppComponent implements OnInit {
     }
   }
 
-  toggleSidebar(): void {
-    this.isCollapsed = !this.isCollapsed;
+  toggleSidebar() {
+    this.sidebarService.toggleSidebar();
   }
 }

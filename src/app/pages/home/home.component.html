@@ -6,7 +6,7 @@
   <img class="cover-image" src="../../../assets/welcome-image.gif" alt="Imagen">
 </article>
 
-<div class="cards-container" >
+<div class="cards-container" [class.sidebar-collapsed]="isSidebarCollapsed">
   @for (juego of juegos; track juego.nombre) {
     <div class="card">
       <img class="card-image" [src]="juego.imagen" alt="{{ juego.nombre }}">

@@ -1,39 +1,50 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { SidebarService } from '../../services/sidebar.service';
 import { AppComponent } from '../../app.component';
+
 
 @Component({
   selector: 'app-home',
   imports: [],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.css'],
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
+  isSidebarCollapsed = false;
+  
+  constructor(private appComponent: AppComponent, private sidebarService: SidebarService) {}
+  
+  toggleSidebar() {
+    this.appComponent.toggleSidebar();
+  }
+  
+  ngOnInit() {
+    this.sidebarService.isCollapsed$.subscribe(
+      (state) => (this.isSidebarCollapsed = state)
+    );
+  }
+
   juegos = [
     {
       nombre: 'Ahorcado',
       descripcion: 'Pon a prueba tu vocabulario adivinando palabras.',
-      imagen: '../../assets/ahorcado.png'
+      imagen: '../../assets/ahorcado.png',
     },
     {
       nombre: 'Mayor o Menor',
       descripcion: 'Adivina si el próximo número será mayor o menor.',
-      imagen: '../../../assets/mayor-menor.png'
+      imagen: '../../../assets/mayor-menor.png',
     },
     {
       nombre: 'Preguntados',
       descripcion: 'Responde preguntas y demuestra tus conocimientos.',
-      imagen: '../../../assets/preguntados.webp'
+      imagen: '../../../assets/preguntados.webp',
     },
     {
       nombre: 'Juego Propio',
       descripcion: 'Un juego único diseñado por mí.',
-      imagen: '../../../assets/juego-propio.png'
-    }
+      imagen: '../../../assets/juego-propio.png',
+    },
   ];
 
-  constructor(private appComponent: AppComponent) {}
-
-  toggleSidebar() {
-    this.appComponent.toggleSidebar();
-  }
 }
