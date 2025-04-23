@@ -1,17 +1,3 @@
-.background-image {
-  position: fixed;
-  z-index: -1;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: linear-gradient(to bottom, transparent 10%, rgba(0, 0, 0, 0.8) 90%), 
-  url('../../../assets/background-image.gif');
-  background-position: center top;
-  background-repeat: no-repeat;
-  background-size: cover;
-}
-
 .quien-soy-box {
   position: absolute;
   top: 50%;
@@ -29,7 +15,7 @@
 .quien-soy-box h1 {
   margin-bottom: 20px;
   font-size: 24px;
-  color: #03e9f4;
+  color: #8a2be2;
 }
 
 .quien-soy-box img.avatar {
@@ -37,7 +23,7 @@
   height: 150px;
   border-radius: 50%;
   margin-bottom: 20px;
-  border: 3px solid #03e9f4;
+  border: 3px solid #8a2be2;
 }
 
 .quien-soy-box p {
@@ -49,7 +35,7 @@
 .quien-soy-box h2 {
   margin-top: 30px;
   font-size: 20px;
-  color: #03e9f4;
+  color: #8a2be2;
 }
 
 .quien-soy-box p:last-child {

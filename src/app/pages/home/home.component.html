@@ -1,5 +1,20 @@
 <div class="background-image"></div>
 <article class="box" (click)="toggleSidebar()">
-    <img class="cover-image" src="../../../assets/welcome-image.gif" alt="Imagen">
-    <a></a>
+  <div class="username-container">
+    <p class="username">{{ "Usuario" }}!</p>
+  </div>
+  <img class="cover-image" src="../../../assets/welcome-image.gif" alt="Imagen">
 </article>
+
+<div class="cards-container" >
+  @for (juego of juegos; track juego.nombre) {
+    <div class="card">
+      <img class="card-image" [src]="juego.imagen" alt="{{ juego.nombre }}">
+      <h3 class="card-title">{{ juego.nombre }}</h3>
+      <p class="card-description">{{ juego.descripcion }}</p>
+      <button class="card-button">Jugar</button>
+    </div>
+  } @empty {
+    <p>No hay juegos disponibles.</p>
+  }
+</div>

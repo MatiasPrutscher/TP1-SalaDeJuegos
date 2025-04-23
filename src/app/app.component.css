@@ -34,6 +34,8 @@
   width: 60px; /* Ancho reducido */
   opacity: 0; /* Totalmente transparente */
   pointer-events: none; /* Desactiva la interacción */
+  overflow: hidden; /* Ocultar contenido */
+  transition: width 0.3s ease;
 }
 
 .sidebar a {
@@ -53,7 +55,7 @@
 }
 
 .sidebar a:hover {
-  background-color: #575757; /* Color al pasar el cursor */
+  background-color: #8a2be2; /* Color al pasar el cursor */
   transform: scale(1.05); /* Efecto de agrandamiento */
   box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
 }
@@ -72,4 +74,60 @@
 
 .sidebar.collapsed ~ .content {
   margin-left: 60px; /* Ajusta el margen cuando la sidebar está colapsada */
+}
+
+/* Controles multimedia dentro de la sidebar */
+.music-controls {
+  position: absolute;
+  bottom: 20px; /* Posiciona los controles en la parte inferior */
+  width: 100%; /* Asegura que ocupen todo el ancho de la sidebar */
+  display: flex;
+  flex-direction: column; /* Organiza las filas verticalmente */
+  align-items: center; /* Centra los botones horizontalmente */
+  gap: 10px; /* Espaciado entre filas */
+}
+
+.music-controls .row {
+  display: flex; /* Organiza los botones en una fila */
+  justify-content: center; /* Centra los botones horizontalmente */
+  gap: 10px; /* Espaciado entre botones */
+}
+
+.control-btn {
+  background-color: #4a4a4a;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.control-btn:hover {
+  background-color: #8a2be2;
+  transform: scale(1.1); 
+}
+
+.control-btn:active {
+  transform: scale(0.9); 
+}
+
+/* Estilo para el nombre de la canción */
+.song-title {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  text-align: center;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.7rem;
+  color: #ffffff;
+  text-shadow: 2px 2px 0px #000;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
 }

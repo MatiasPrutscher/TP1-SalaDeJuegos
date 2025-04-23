@@ -2,8 +2,34 @@
 <div [class.collapsed]="isCollapsed" class="sidebar">
   <br>
   <a class="btn btn-primary" routerLink="">Home</a>
-  <a class="btn btn-primary" routerLink="/registro">Registro</a>
   <a class="btn btn-primary" routerLink="/login">Login</a>
-  <a class="btn btn-primary" routerLink="/quien-soy">¿Quién Soy?</a>
+  <a class="btn btn-primary" routerLink="/registro">Registro</a>
+  <a class="btn btn-danger" routerLink="/logout">Cerrar sesión</a>
+  
+  <!-- Controles multimedia -->
+  <div class="music-controls">
+    <a class="btn btn-primary" routerLink="/quien-soy">¿Quién Soy?</a>
+    <!-- Nombre de la canción -->
+    <div class="song-title">
+      {{ songTitle }}
+    </div>
+    <div class="row">
+      <button (click)="playMusic()" class="control-btn">
+        <i class="fas fa-play"></i> <!-- Ícono de play -->
+      </button>
+      <button (click)="pauseMusic()" class="control-btn">
+        <i class="fas fa-pause"></i> <!-- Ícono de pausa -->
+      </button>
+    </div>
+    <div class="row">
+      <button (click)="increaseVolume()" class="control-btn">
+        <i class="fas fa-volume-up"></i> <!-- Ícono de subir volumen -->
+      </button>
+      <button (click)="decreaseVolume()" class="control-btn">
+        <i class="fas fa-volume-down"></i> <!-- Ícono de bajar volumen -->
+      </button>
+    </div>
+  </div>
 </div>
+
 <router-outlet></router-outlet>

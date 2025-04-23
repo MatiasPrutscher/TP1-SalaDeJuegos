@@ -1,1 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent; 
+    overflow-x: hidden;
+}
+
+body {
+    background-image: linear-gradient(to bottom, transparent 10%, rgba(0, 0, 0, 0.8) 90%), 
+    url('./assets/background-image.gif');
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
