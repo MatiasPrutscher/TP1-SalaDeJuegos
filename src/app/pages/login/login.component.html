@@ -1,18 +1,31 @@
 <div class="background-image">
-    <div class="login-box">
-      <h2>Login</h2>
-      <form>
-        <div class="user-box">
-          <input type="text" name="mail" required="">
-          <label>Mail</label>
-        </div>
-        <div class="user-box">
-          <input type="password" name="contraseña" required="">
-          <label>Contraseña</label>
-        </div>
-        <button type="submit" class="login-button">
-          Ingresar
+  <div class="login-box">
+    <h2>Login</h2>
+    <form (ngSubmit)="login()">
+      <div class="user-box">
+        <input type="email" [(ngModel)]="email" name="email" required />
+        <label>Correo Electrónico</label>
+      </div>
+      <div class="user-box">
+        <input type="password" [(ngModel)]="password" name="password" required />
+        <label>Contraseña</label>
+      </div>
+      <button type="submit" class="login-button">Ingresar</button>
+    </form>
+
+    @if (errorMessage) {
+      <p class="error-message">{{ errorMessage }}</p>
+    }
+
+    <div class="quick-login">
+      <h3>Inicio rápido</h3>
+      @for (user of quickUsers; track user.email) {
+        <button (click)="quickLogin(user)" class="quick-login-button">
+          {{ user.email }}
         </button>
-      </form>
+      } @empty {
+        <p>No hay usuarios de inicio rápido disponibles.</p>
+      }
     </div>
   </div>
+</div>

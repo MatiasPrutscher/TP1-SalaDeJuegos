@@ -1,30 +1,34 @@
 <div class="background-image">
-    <div class="registro-box">
-      <h2>Registro</h2>
-      <form>
-        <div class="user-box">
-          <input type="email" name="email" required>
-          <label>Correo Electrónico</label>
-        </div>
-        <div class="user-box">
-          <input type="text" name="nome" required>
-          <label>Nombre</label>
-        </div>
-        <div class="user-box">
-          <input type="text" name="apellido" required>
-          <label>Apellido</label>
-        </div>
-        <div class="user-box">
-          <input type="text" name="edad" required>
-          <label>Edad</label>
-        </div>
-        <div class="user-box">
-          <input type="password" name="password" required>
-          <label>Contraseña</label>
-        </div>
-        <button type="submit" class="registro-button">
-          Registrarse
-        </button>
-      </form>
-    </div>
+  <div class="registro-box">
+    <h2>Registro</h2>
+    <form (ngSubmit)="register()">
+      <div class="user-box">
+        <input type="email" [(ngModel)]="email" name="email" required />
+        <label>Correo Electrónico</label>
+      </div>
+      <div class="user-box">
+        <input type="text" [(ngModel)]="nombre" name="nombre" required />
+        <label>Nombre</label>
+      </div>
+      <div class="user-box">
+        <input type="text" [(ngModel)]="apellido" name="apellido" required />
+        <label>Apellido</label>
+      </div>
+      <div class="user-box">
+        <input type="number" [(ngModel)]="edad" name="edad" required />
+        <label>Edad</label>
+      </div>
+      <div class="user-box">
+        <input type="password" [(ngModel)]="password" name="password" required />
+        <label>Contraseña</label>
+      </div>
+      <button type="submit" class="registro-button">Registrarse</button>
+    </form>
+
+    @if (errorMessage) {
+      <p class="message">{{ errorMessage }}</p>
+    } @else if (successMessage) {
+      <p class="message">{{ successMessage }}</p>
+    }
+  </div>
 </div>

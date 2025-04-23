@@ -1,27 +1,52 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { SidebarService } from '../../services/sidebar.service';
 import { AppComponent } from '../../app.component';
-
+import { AuthService } from '../../services/auth.service';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-home',
-  imports: [],
+imports: [],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
 })
 export class HomeComponent implements OnInit {
   isSidebarCollapsed = false;
-  
-  constructor(private appComponent: AppComponent, private sidebarService: SidebarService) {}
-  
+  userName: string = 'Invitado'; // Valor por defecto
+
+  constructor(
+    private appComponent: AppComponent,
+    private sidebarService: SidebarService,
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef,
+    private userService: UserService
+  ) {}
+
   toggleSidebar() {
     this.appComponent.toggleSidebar();
   }
-  
-  ngOnInit() {
+
+  async ngOnInit(): Promise<void> {
     this.sidebarService.isCollapsed$.subscribe(
       (state) => (this.isSidebarCollapsed = state)
     );
+
+    this.userService.userName$.subscribe((name) => {
+      this.userName = name;
+    });
+
+    try {
+      this.userName = await this.authService.getUserName(); // Obtiene el nombre del usuario
+    } catch (error) {
+      console.error('Error al obtener el nombre del usuario:', error);
+      this.userName = 'Invitado'; // Si hay un error, muestra "Invitado"
+    }
+    this.cdr.detectChanges(); // Fuerza la detección de cambios
+  }
+
+  async updateUserName(): Promise<void> {
+    this.userName = await this.authService.getUserName();
+    this.cdr.detectChanges(); // Fuerza la detección de cambios
   }
 
   juegos = [
@@ -46,5 +71,4 @@ export class HomeComponent implements OnInit {
       imagen: '../../../assets/juego-propio.png',
     },
   ];
-
 }

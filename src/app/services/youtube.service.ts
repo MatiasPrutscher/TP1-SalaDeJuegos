@@ -20,7 +20,7 @@ export class YoutubeService {
       this.iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
       document.body.appendChild(this.iframe);
 
-      // Esperar a que el iframe esté completamente cargado
+      // Espera a que el iframe esté completamente cargado
       await new Promise<void>((resolve) => {
         this.iframe!.onload = () => {
           console.log('YouTube iframe cargado correctamente.');

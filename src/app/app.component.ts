@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { YoutubeService } from './services/youtube.service';
 import { SidebarService } from './services/sidebar.service';
-import { RouterModule } from '@angular/router';
+import { AuthService } from './services/auth.service';
+import { RouterModule, Router } from '@angular/router';
+import { UserService } from './services/user.service';
 
 @Component({
   selector: 'app-root',
@@ -13,10 +15,14 @@ export class AppComponent implements OnInit {
   isCollapsed = false;
   public currentVolume: number = 50; // Volumen inicial (50%)
   public songTitle: string = 'Cargando canción...'; // Nombre de la canción
+  isLoggedIn: boolean = false;
 
   constructor(
     private youtubeService: YoutubeService,
-    private sidebarService: SidebarService
+    private sidebarService: SidebarService,
+    private authService: AuthService,
+    private router: Router,
+    private userService: UserService
   ) {
     this.sidebarService.isCollapsed$.subscribe(
       (state) => (this.isCollapsed = state)
@@ -42,6 +48,9 @@ export class AppComponent implements OnInit {
         this.songTitle = 'Error al cargar canción';
       }
     );
+
+    const session = this.authService.getSession();
+    this.isLoggedIn = !!session;
   }
 
   async playMusic(): Promise<void> {
@@ -68,5 +77,16 @@ export class AppComponent implements OnInit {
 
   toggleSidebar() {
     this.sidebarService.toggleSidebar();
+  }
+
+  async logout(): Promise<void> {
+    try {
+      await this.authService.logout(); // Cierra la sesión
+      console.log('Sesión cerrada exitosamente.');
+      this.userService.updateUserName('Invitado'); // Actualiza el nombre del usuario
+      this.router.navigate(['/']); // Redirige al Home
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    }
   }
 }
