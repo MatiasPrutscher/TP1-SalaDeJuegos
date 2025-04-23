@@ -4,7 +4,9 @@
   <a class="btn btn-primary" routerLink="">Home</a>
   <a class="btn btn-primary" routerLink="/login">Login</a>
   <a class="btn btn-primary" routerLink="/registro">Registro</a>
-  <a (click)="logout(); $event.preventDefault()" class="btn btn-danger">Cerrar sesión</a>
+  <a (click)="logout(); $event.preventDefault()" 
+      class="btn btn-danger">Cerrar sesión
+    </a>
   
   <!-- Controles multimedia -->
   <div class="music-controls">
@@ -31,7 +33,6 @@
     </div>
   </div>
 </div>
-
 
 <div class="content">
   <router-outlet></router-outlet>

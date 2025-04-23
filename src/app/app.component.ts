@@ -50,7 +50,7 @@ export class AppComponent implements OnInit {
     );
 
     const session = this.authService.getSession();
-    this.isLoggedIn = !!session;
+this.isLoggedIn = !!session;
   }
 
   async playMusic(): Promise<void> {
@@ -70,7 +70,7 @@ export class AppComponent implements OnInit {
 
   async decreaseVolume(): Promise<void> {
     if (this.currentVolume > 0) {
-      this.currentVolume -= 10;
+      this.currentVolume -= 5;
       await this.youtubeService.setVolume(this.currentVolume);
     }
   }
@@ -83,6 +83,7 @@ export class AppComponent implements OnInit {
     try {
       await this.authService.logout(); // Cierra la sesión
       console.log('Sesión cerrada exitosamente.');
+      this.isLoggedIn = false; // Actualiza el estado de inicio de sesión
       this.userService.updateUserName('Invitado'); // Actualiza el nombre del usuario
       this.router.navigate(['/']); // Redirige al Home
     } catch (error) {

@@ -84,3 +84,14 @@
 .quick-login-button:hover {
   background: #8a2be2;
 }
+
+.error-message {
+  color: #ff4d4d; 
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: center;
+  background-color: rgba(255, 77, 77, 0.1); 
+  padding: 10px;
+  border: 1px solid #ff4d4d;
+  border-radius: 5px;
+}

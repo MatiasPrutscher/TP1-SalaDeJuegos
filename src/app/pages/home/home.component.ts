@@ -6,7 +6,7 @@ import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-home',
-imports: [],
+  imports: [],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
 })
@@ -33,6 +33,7 @@ export class HomeComponent implements OnInit {
 
     this.userService.userName$.subscribe((name) => {
       this.userName = name;
+      this.cdr.detectChanges(); 
     });
 
     try {
@@ -46,7 +47,7 @@ export class HomeComponent implements OnInit {
 
   async updateUserName(): Promise<void> {
     this.userName = await this.authService.getUserName();
-    this.cdr.detectChanges(); // Fuerza la detección de cambios
+    this.cdr.detectChanges(); 
   }
 
   juegos = [

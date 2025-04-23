@@ -27,9 +27,15 @@ export class LoginComponent {
     try {
       console.log('Datos ingresados para login:', { email: this.email, password: this.password });
 
-      if (!this.email || !this.password) {
-        this.errorMessage = 'Por favor, completa todos los campos.';
-        console.warn('Campos incompletos en el formulario de login.');
+      if (!this.email) {
+        this.errorMessage = 'Mail incorrecto';
+        console.warn('El campo de correo electrónico está vacío o es inválido.');
+        return;
+      }
+
+      if (!this.password) {
+        this.errorMessage = 'Contraseña incorrecta';
+        console.warn('El campo de contraseña está vacío o es inválido.');
         return;
       }
 
