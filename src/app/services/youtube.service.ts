@@ -15,7 +15,7 @@ export class YoutubeService {
   async initializePlayer(): Promise<void> {
     if (!this.iframe) {
       this.iframe = document.createElement('iframe');
-      this.iframe.src = 'https://www.youtube.com/embed/4xDzrJKXOOY?enablejsapi=1&autoplay=1&loop=1&playlist=4xDzrJKXOOY';
+      this.iframe.src = 'https://www.youtube.com/embed/4xDzrJKXOOY?enablejsapi=1&loop=1&playlist=4xDzrJKXOOY';
       this.iframe.style.display = 'none';
       this.iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
       document.body.appendChild(this.iframe);
