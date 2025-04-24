@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { YoutubeService } from './services/youtube.service';
 import { SidebarService } from './services/sidebar.service';
 import { AuthService } from './services/auth.service';
@@ -22,7 +22,8 @@ export class AppComponent implements OnInit {
     private sidebarService: SidebarService,
     private authService: AuthService,
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private cdr: ChangeDetectorRef // Inyecta ChangeDetectorRef
   ) {
     this.sidebarService.isCollapsed$.subscribe(
       (state) => (this.isCollapsed = state)
@@ -30,6 +31,7 @@ export class AppComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    console.log('Estado inicial de isLoggedIn:', this.isLoggedIn);
     await this.youtubeService.initializePlayer();
     await this.youtubeService.setVolume(this.currentVolume);
 
@@ -49,8 +51,18 @@ export class AppComponent implements OnInit {
       }
     );
 
-    const session = this.authService.getSession();
-this.isLoggedIn = !!session;
+    // Suscríbete al estado de inicio de sesión
+    this.authService.isLoggedIn$.subscribe((loggedIn) => {
+      this.isLoggedIn = loggedIn;
+    });
+
+    // Verifica la sesión al cargar la aplicación
+    this.authService.getSession();
+
+    const session = await this.authService.getSession();
+    this.isLoggedIn = !!session;
+    this.cdr.detectChanges(); // Fuerza la detección de cambios
+    console.log('Estado final de isLoggedIn en el onInit:', this.isLoggedIn);
   }
 
   async playMusic(): Promise<void> {
@@ -63,7 +75,7 @@ this.isLoggedIn = !!session;
 
   async increaseVolume(): Promise<void> {
     if (this.currentVolume < 100) {
-      this.currentVolume += 10;
+      this.currentVolume += 5;
       await this.youtubeService.setVolume(this.currentVolume);
     }
   }
@@ -84,10 +96,12 @@ this.isLoggedIn = !!session;
       await this.authService.logout(); // Cierra la sesión
       console.log('Sesión cerrada exitosamente.');
       this.isLoggedIn = false; // Actualiza el estado de inicio de sesión
+      this.cdr.detectChanges(); // Fuerza la detección de cambios
       this.userService.updateUserName('Invitado'); // Actualiza el nombre del usuario
       this.router.navigate(['/']); // Redirige al Home
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
     }
+    console.log('Estado de isLoggedIn en logout:', this.isLoggedIn);
   }
 }

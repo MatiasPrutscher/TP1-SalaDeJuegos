@@ -2,12 +2,15 @@
 <div [class.collapsed]="isCollapsed" class="sidebar">
   <br>
   <a class="btn btn-primary" routerLink="">Home</a>
-  <a class="btn btn-primary" routerLink="/login">Login</a>
-  <a class="btn btn-primary" routerLink="/registro">Registro</a>
-  <a (click)="logout(); $event.preventDefault()" 
-      class="btn btn-danger">Cerrar sesión
-    </a>
-  
+  @if(!isLoggedIn){
+    <a class="btn btn-primary" routerLink="/login">Login</a>
+    <a class="btn btn-primary" routerLink="/registro">Registro</a>
+  }@else {
+    <a (click)="logout(); $event.preventDefault()" 
+        class="btn btn-danger">Cerrar sesión
+      </a>
+    }
+
   <!-- Controles multimedia -->
   <div class="music-controls">
     <a class="btn btn-primary" routerLink="/quien-soy">¿Quién Soy?</a>

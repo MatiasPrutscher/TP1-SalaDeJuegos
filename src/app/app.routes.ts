@@ -1,4 +1,5 @@
-import { Routes } from '@angular/router';
+import { Routes, RouterModule } from '@angular/router';
+import { NgModule } from '@angular/core';
 import { HomeComponent } from './pages/home/home.component';
 import { LoginComponent } from './pages/login/login.component';
 import { RegistroComponent } from './pages/registro/registro.component';
@@ -10,3 +11,8 @@ export const routes: Routes = [
     {path: 'registro', component: RegistroComponent},
     {path: 'quien-soy', component: QuienSoyComponent}
 ];
+@NgModule({
+    imports: [RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' })],
+    exports: [RouterModule],
+  })
+  export class AppRoutingModule {}

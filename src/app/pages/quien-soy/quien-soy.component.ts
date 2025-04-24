@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { GithubService } from '../../services/github.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-quien-soy',
@@ -9,14 +10,23 @@ import { GithubService } from '../../services/github.service';
 })
 export class QuienSoyComponent implements OnInit {
   userData: any;
-  username: string = 'MatiasPrutscher'; 
+  username: string = 'MatiasPrutscher';
 
-  constructor(private githubService: GithubService) {}
+  constructor(private githubService: GithubService, private cdr: ChangeDetectorRef) {}
 
-  ngOnInit(): void {
-    this.githubService.getUser(this.username).subscribe({
-      next: (data) => (this.userData = data),
-      error: (err) => console.error('Error fetching user data:', err),
-    });
+  async ngOnInit(): Promise<void> {
+    await this.fetchUserData();
+    console.log('Final OnInit:', this.userData); // Ahora debería mostrar los datos correctamente
+  }
+
+  private async fetchUserData(): Promise<void> {
+    try {
+      console.log('Fetching user data for:', this.username);
+      this.userData = await firstValueFrom(this.githubService.getUser(this.username));
+      console.log('Data fetched:', this.userData);
+      this.cdr.detectChanges(); // Notifica a Angular que debe actualizar la vista
+    } catch (err) {
+      console.error('Error fetching user data:', err);
+    }
   }
 }

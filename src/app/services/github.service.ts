@@ -11,6 +11,7 @@ export class GithubService {
   constructor(private http: HttpClient) {}
 
   getUser(username: string): Observable<any> {
+    console.log(`Fetching data for user: ${username}`);
     return this.http.get(`${this.apiUrl}/${username}`);
   }
 }

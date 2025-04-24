@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 @Injectable({
@@ -6,11 +7,13 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 })
 export class AuthService {
   private supabase: SupabaseClient;
+  private isLoggedInSubject = new BehaviorSubject<boolean>(false); // Estado inicial
+  isLoggedIn$ = this.isLoggedInSubject.asObservable(); // Observable para suscribirse
 
   constructor() {
     this.supabase = createClient(
       'https://dqifizzwkvnblbmreaze.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRxaWZpenp3a3ZuYmxibXJlYXplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0MjE0NzYsImV4cCI6MjA2MDk5NzQ3Nn0.7kvYG1dbLx-4pgseB-Rrr0q5DhyLYqiJcxSnYyIbgJc' 
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRxaWZpenp3a3ZuYmxibXJlYXplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0MjE0NzYsImV4cCI6MjA2MDk5NzQ3Nn0.7kvYG1dbLx-4pgseB-Rrr0q5DhyLYqiJcxSnYyIbgJc'
     );
   }
 
@@ -49,6 +52,7 @@ export class AuthService {
       throw error;
     }
 
+    this.isLoggedInSubject.next(true); // Actualiza el estado
     console.log('Inicio de sesión exitoso:', data);
     return data;
   }
@@ -60,6 +64,7 @@ export class AuthService {
       console.error('Error al cerrar sesión:', error.message);
       throw error;
     }
+    this.isLoggedInSubject.next(false); // Actualiza el estado
     console.log('Sesión cerrada exitosamente.');
   }
 
@@ -67,8 +72,11 @@ export class AuthService {
     const { data, error } = await this.supabase.auth.getSession();
     if (error) {
       console.error('Error al obtener la sesión:', error.message);
+      this.isLoggedInSubject.next(false); // Actualiza el estado
       return null;
     }
+    const isLoggedIn = !!data.session;
+    this.isLoggedInSubject.next(isLoggedIn); // Actualiza el estado
     return data.session; 
   }
 
