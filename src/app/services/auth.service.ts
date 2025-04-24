@@ -111,4 +111,27 @@ export class AuthService {
 
     return data.nombre || 'Invitado'; // Devuelve el nombre o "Invitado" si no está definido
   }
+
+  async verificarUsuario(email: string): Promise<boolean> {
+    console.log('Verificando si el usuario ya está registrado con email:', email);
+
+    const { data, error } = await this.supabase
+      .from('usuarios') 
+      .select('email') 
+      .eq('email', email) 
+      .single(); 
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        // Código de error cuando no se encuentra el registro
+        console.log('El usuario no está registrado.');
+        return false;
+      }
+      console.error('Error al verificar el usuario:', error.message);
+      throw error;
+    }
+
+    console.log('El mail ya está registrado.');
+    return !!data; // Devuelve true si se encontró un registro
+  }
 }

@@ -36,6 +36,13 @@ export class RegistroComponent {
         return;
       }
 
+      const userExists = await this.authService.verificarUsuario(this.email);
+      if (userExists) {
+        this.errorMessage = 'El mail ya está registrado.';
+        console.warn('Intento de registro con un correo ya registrado.');
+        return;
+      }
+
       await this.authService.crearCuenta(this.email, this.password, this.nombre, this.apellido, this.edad);
       this.successMessage = 'Registro exitoso. Redirigiendo al Home...';
       console.log('Registro exitoso. Iniciando sesión automáticamente...');
