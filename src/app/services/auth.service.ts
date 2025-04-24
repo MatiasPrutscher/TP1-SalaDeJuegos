@@ -101,7 +101,7 @@ export class AuthService {
   async getUserName(): Promise<string> {
     const session = await this.getSession();
     if (!session || !session.user) {
-      console.warn('No hay sesión activa.');
+      console.log('No hay sesión activa.');
       return 'Invitado'; // Devuelve "Invitado" si no hay sesión
     }
 

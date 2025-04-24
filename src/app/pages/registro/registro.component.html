@@ -3,30 +3,29 @@
     <h2>Registro</h2>
     <form (ngSubmit)="register()">
       <div class="user-box">
-        <input type="email" [(ngModel)]="email" name="email" required />
+        <input type="email" [(ngModel)]="email" name="email" placeholder=" " required />
         <label>Correo Electrónico</label>
       </div>
       <div class="user-box">
-        <input type="text" [(ngModel)]="nombre" name="nombre" required />
+        <input type="text" [(ngModel)]="nombre" name="nombre" placeholder=" " placeholder=" " required />
         <label>Nombre</label>
       </div>
       <div class="user-box">
-        <input type="text" [(ngModel)]="apellido" name="apellido" required />
+        <input type="text" [(ngModel)]="apellido" name="apellido" placeholder=" " required />
         <label>Apellido</label>
       </div>
       <div class="user-box">
-        <input type="number" [(ngModel)]="edad" name="edad" required />
+        <input type="number" [(ngModel)]="edad" name="edad" placeholder=" " required />
         <label>Edad</label>
       </div>
       <div class="user-box">
-        <input type="password" [(ngModel)]="password" name="password" required />
+        <input type="password" [(ngModel)]="password" name="password" placeholder=" " required />
         <label>Contraseña</label>
       </div>
+      @if (errorMessage) {
+        <p class="error-message">{{ errorMessage }}</p>
+      } 
       <button type="submit" class="registro-button">Registrarse</button>
     </form>
-
-    @if (errorMessage) {
-      <p class="message">{{ errorMessage }}</p>
-    } 
   </div>
 </div>
