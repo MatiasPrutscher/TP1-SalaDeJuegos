@@ -2,32 +2,35 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 400px;
-  padding: 40px;
+  width: 320px; /* Reducido de 400px a 320px */
+  padding: 32px; /* Reducido de 40px a 32px */
   transform: translate(-50%, -50%);
   background: rgba(0, 0, 0, 0.884);
-  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.6);
-  border-radius: 10px;
-  box-sizing: border-box; 
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.6); /* Ajustado proporcionalmente */
+  border-radius: 8px; /* Reducido de 10px a 8px */
+  box-sizing: border-box;
 }
 
-.login-box h2 {
-  margin: 0 0 30px; 
+/* Títulos */
+.login-box h2, .registro-box h2 {
+  margin: 0 0 24px; /* Reducido de 30px a 24px */
   padding: 0;
   color: #fff;
   text-align: center;
+  font-size: 20px; /* Reducido de 25px a 20px */
 }
 
 .user-box {
   position: relative;
 }
 
+/* Inputs y Labels */
 .user-box input {
   width: 100%;
-  padding: 10px 0;
-  font-size: 16px;
+  padding: 8px 0; /* Reducido de 10px a 8px */
+  font-size: 13px; /* Reducido de 16px a 13px */
   color: #fff;
-  margin-bottom: 30px;
+  margin-bottom: 24px; /* Reducido de 30px a 24px */
   border: none;
   border-bottom: 1px solid #fff;
   outline: none;
@@ -39,7 +42,7 @@
   top: 0;
   left: 0;
   padding: 10px 0; 
-  font-size: 16px;
+  font-size: 13px; /* Reducido de 16px a 13px */
   color: #fff;
   pointer-events: none;
   transition: 0.5s;
@@ -61,17 +64,21 @@
   font-size: 12px;
 }
 
+.login-button, .registro-button {
+  padding: 8px 16px; /* Reducido de 10px 20px a 8px 16px */
+  font-size: 13px; /* Reducido de 16px a 13px */
+  letter-spacing: 3px; /* Reducido de 4px a 3px */
+  border-radius: 4px; /* Reducido de 5px a 4px */
+}
+
 .login-button {
   position: relative; 
   display: inline-block;
-  padding: 10px 20px;
   color: #ffffff;
-  font-size: 16px;
   text-decoration: none;
   text-transform: uppercase;
   overflow: hidden;
   transition: 0.5s;
-  letter-spacing: 4px;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -80,7 +87,6 @@
 .login-button:hover {
   background: #8a2be2;
   color: #fff;
-  border-radius: 5px;
   box-shadow: 0 0 5px #8a2be2, 0 0 25px #8a2be2, 0 0 50px #8a2be2, 0 0 100px #8a2be2;
 }
 
@@ -91,19 +97,18 @@
 
 .quick-login-button {
   display: inline-block;
-  margin: 10px;
-  padding: 10px;
+  margin: 8px; /* Reducido de 10px a 8px */
   color: #fff;
   background: #8a2be2;
   border: none;
   border-radius: 50%;
   cursor: pointer;
   transition: 0.3s;
-  width: 50px;
-  height: 50px;
+  width: 40px; /* Reducido de 50px a 40px */
+  height: 40px; /* Reducido de 50px a 40px */
   text-align: center;
-  line-height: 30px;
-  font-size: 16px;
+  line-height: 30px; /* Ajustado proporcionalmente */
+  font-size: 13px; /* Reducido de 16px a 13px */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
@@ -116,6 +121,7 @@
   color: #fff;
   margin-bottom: 10px;
   font-size: 22px;
+
 }
 
 .error-message {
