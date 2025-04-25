@@ -51,7 +51,7 @@ export class AppComponent implements OnInit {
       }
     );
 
-    // Suscríbete al estado de inicio de sesión
+    // Se subscribe al estado de inicio de sesión
     this.authService.isLoggedIn$.subscribe((loggedIn) => {
       this.isLoggedIn = loggedIn;
     });
