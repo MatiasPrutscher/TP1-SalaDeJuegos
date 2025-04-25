@@ -7,8 +7,8 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 })
 export class AuthService {
   private supabase: SupabaseClient;
-  private isLoggedInSubject = new BehaviorSubject<boolean>(false); // Estado inicial
-  isLoggedIn$ = this.isLoggedInSubject.asObservable(); // Observable para suscribirse
+  private isLoggedInSubject = new BehaviorSubject<boolean>(false);
+  isLoggedIn$ = this.isLoggedInSubject.asObservable();
 
   constructor() {
     this.supabase = createClient(
@@ -17,112 +17,96 @@ export class AuthService {
     );
   }
 
-  async crearCuenta(email: string, password: string, nombre: string, apellido: string, edad: number) {
-    console.log('Intentando crear cuenta con:', { email, nombre, apellido, edad });
+  private manejarError(accion: string, error: any): void {
+    const mensaje = error?.message || 'Error desconocido';
+    console.error(`Error al ${accion}:`, mensaje);
+    throw new Error(mensaje);
+  }
 
-    const { data, error } = await this.supabase.auth.signUp({ email, password });
+  private log(accion: string, datos: any): void {
+    console.log(`Intentando ${accion} con:`, datos);
+  }
+
+  private async consultarUsuario(email: string, campos: string[]): Promise<any> {
+    const { data, error } = await this.supabase
+      .from('usuarios')
+      .select(campos.join(','))
+      .eq('email', email)
+      .single();
 
     if (error) {
-      console.error('Error al crear cuenta:', error.message);
-      throw error;
+      this.manejarError('consultar usuario', error);
     }
 
-    console.log('Cuenta creada en Supabase:', data);
+    return data;
+  }
+
+  async crearCuenta(email: string, password: string, nombre: string, apellido: string, edad: number) {
+    this.log('crear cuenta', { email, nombre, apellido, edad });
+
+    const { data, error } = await this.supabase.auth.signUp({ email, password });
+    if (error) this.manejarError('crear cuenta', error);
 
     const { error: dbError } = await this.supabase.from('usuarios').insert([
       { email, nombre, apellido, edad },
     ]);
+    if (dbError) this.manejarError('guardar datos adicionales', dbError);
 
-    if (dbError) {
-      console.error('Error al guardar datos adicionales:', dbError.message);
-      throw dbError;
-    }
-
-    console.log('Datos adicionales guardados en la base de datos.');
+    console.log('Cuenta creada y datos adicionales guardados.');
     return data;
   }
 
   async iniciarSesion(email: string, password: string) {
-    console.log('Intentando iniciar sesión con:', { email });
+    this.log('iniciar sesión', { email });
 
     const { data, error } = await this.supabase.auth.signInWithPassword({ email, password });
+    if (error) this.manejarError('iniciar sesión', error);
 
-    if (error) {
-      console.error('Error al iniciar sesión:', error.message);
-      throw error;
-    }
-
-    this.isLoggedInSubject.next(true); // Actualiza el estado
-    console.log('Inicio de sesión exitoso:', data);
+    this.isLoggedInSubject.next(true);
+    console.log('Inicio de sesión exitoso.');
     return data;
   }
 
   async logout(): Promise<void> {
     console.log('Cerrando sesión...');
     const { error } = await this.supabase.auth.signOut();
-    if (error) {
-      console.error('Error al cerrar sesión:', error.message);
-      throw error;
-    }
-    this.isLoggedInSubject.next(false); // Actualiza el estado
+    if (error) this.manejarError('cerrar sesión', error);
+
+    this.isLoggedInSubject.next(false);
     console.log('Sesión cerrada exitosamente.');
   }
 
   async getSession() {
     const { data, error } = await this.supabase.auth.getSession();
     if (error) {
-      console.error('Error al obtener la sesión:', error.message);
-      this.isLoggedInSubject.next(false); // Actualiza el estado
+      this.manejarError('obtener la sesión', error);
+      this.isLoggedInSubject.next(false);
       return null;
     }
+
     const isLoggedIn = !!data.session;
-    this.isLoggedInSubject.next(isLoggedIn); // Actualiza el estado
-    return data.session; 
+    this.isLoggedInSubject.next(isLoggedIn);
+    return data.session;
   }
 
   async getUserData(email: string) {
-    console.log('Obteniendo datos del usuario con email:', email);
-
-    const { data, error } = await this.supabase
-      .from('usuarios')
-      .select('nombre')
-      .eq('email', email)
-      .single();
-
-    if (error) {
-      console.error('Error al obtener los datos del usuario:', error.message);
-      throw error;
-    }
-
-    console.log('Datos del usuario obtenidos:', data);
-    return data;
+    this.log('obtener datos del usuario', { email });
+    return await this.consultarUsuario(email, ['nombre']);
   }
 
   async getUserName(): Promise<string> {
     const session = await this.getSession();
-    if (!session || !session.user) {
-      console.log('No hay sesión activa.');
-      return 'Invitado'; // Devuelve "Invitado" si no hay sesión
+    if (!session?.user?.email) {
+      console.log('No hay sesión activa o el usuario no tiene email.');
+      return 'Invitado';
     }
 
-    const email = session.user.email;
-    const { data, error } = await this.supabase
-      .from('usuarios')
-      .select('nombre')
-      .eq('email', email)
-      .single();
-
-    if (error) {
-      console.error('Error al obtener el nombre del usuario:', error.message);
-      return 'Invitado'; // Devuelve "Invitado" si hay un error
-    }
-
-    return data.nombre || 'Invitado'; // Devuelve el nombre o "Invitado" si no está definido
+    const data = await this.consultarUsuario(session.user.email, ['nombre']);
+    return data?.nombre || 'Invitado';
   }
 
   async verificarUsuario(email: string): Promise<boolean> {
-    console.log('Verificando si el usuario ya está registrado con email:', email);
-
+    this.log('Verificando si el usuario ya está registrado con email:', {email});
     const { data, error } = await this.supabase
       .from('usuarios') 
       .select('email') 
@@ -138,7 +122,6 @@ export class AuthService {
       console.error('Error al verificar el usuario:', error.message);
       throw error;
     }
-
     console.log('El mail ya está registrado.');
     return !!data; // Devuelve true si se encontró un registro
   }
