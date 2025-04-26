@@ -1,0 +1,71 @@
+<div class="ahorcado-container">
+  <h1>Ahorcado</h1>
+  <div class="timer-circle-container">
+    <div class="timer-circle">
+      <span>{{ timerService.tiempoRestante$ | async }}</span>
+    </div>
+  </div>
+  <div class="stickman">
+    <div class="base"></div>
+    <div class="pole"></div>
+    <div class="beam"></div>
+    <div class="rope"></div>
+    <div class="head" [class.visible]="intentosRestantes <= 9">
+      @if (intentosRestantes <= 3) {
+        <div class="eye left-eye">X</div>
+      }
+      @if (intentosRestantes <= 2) {
+        <div class="eye right-eye">X</div>
+      }
+      @if (intentosRestantes <= 1) {
+        <div class="mouth">&#40;</div>
+      }
+    </div>
+    @if (intentosRestantes === 0) {
+      <div class="dead"></div>
+    }
+    <div class="body" [class.visible]="intentosRestantes <= 8"></div>
+    <div class="left-arm" [class.visible]="intentosRestantes <= 7"></div>
+    <div class="right-arm" [class.visible]="intentosRestantes <= 6"></div>
+    <div class="left-leg" [class.visible]="intentosRestantes <= 5"></div>
+    <div class="right-leg" [class.visible]="intentosRestantes <= 4"></div>
+  </div>
+
+  <p>Palabra:</p>
+  <p class="palabra">{{ palabraMostrada.join(' ') }}</p>
+  <p>Intentos restantes: {{ intentosRestantes }}</p>
+  <p>Puntos: {{ puntosAcumulados }} </p>
+  <p>(Multiplicador: x{{ multiplicador }})</p>
+
+  <div class="letras">
+    @if (jugando) {
+      @for (letra of letrasDisponibles; track letra) {
+        <button
+          (click)="letraSeleccionada(letra)"
+          [disabled]="!jugando || letrasUsadas.has(letra)"
+          [class.disabled]="letrasUsadas.has(letra)"
+        >
+          {{ letra }}
+        </button>
+      } @empty {
+        <p>No hay letras disponibles.</p>
+      }
+    }
+  </div>
+
+  @if (mensaje) {
+    <p class="mensaje">{{ mensaje }}</p>
+  }
+
+  @if (!jugando && mensaje === '¡Ganaste! ¿Quieres continuar o plantarte?') {
+    <div class="botones-accion">
+      <button (click)="continuar()">Continuar</button>
+      <button (click)="plantarse()">Plantarse</button>
+    </div>
+  } @else if (!jugando) {
+    <div class="botones-accion">
+      <button (click)="volverAJugar()">Volver a Jugar</button>
+      <button (click)="volverAlHome()">Volver al Home</button>
+    </div>
+  }
+</div>

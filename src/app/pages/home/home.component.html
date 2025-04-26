@@ -12,7 +12,7 @@
       <img class="card-image" [src]="juego.imagen" alt="{{ juego.nombre }}">
       <h3 class="card-title">{{ juego.nombre }}</h3>
       <p class="card-description">{{ juego.descripcion }}</p>
-      <button class="card-button">Jugar</button>
+      <button class="card-button" (click)="irAJuego(juego.navigator)">Jugar</button>
     </div>
   } @empty {
     <p>No hay juegos disponibles.</p>

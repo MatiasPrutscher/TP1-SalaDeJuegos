@@ -1,12 +1,13 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { SidebarService } from '../../services/sidebar.service';
+import { Router } from '@angular/router';
+import { SidebarService } from '../../services/sidebar/sidebar.service';
 import { AppComponent } from '../../app.component';
-import { AuthService } from '../../services/auth.service';
-import { UserService } from '../../services/user.service';
-
+import { AuthService } from '../../services/auth/auth.service';
+import { UserService } from '../../services/user/user.service';
+import { Navigation } from '@angular/router';
 @Component({
   selector: 'app-home',
-  imports: [],
+imports: [],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
 })
@@ -14,7 +15,35 @@ export class HomeComponent implements OnInit {
   isSidebarCollapsed = false;
   userName: string = 'Invitado'; // Valor por defecto
 
+  juegos = [
+    {
+      nombre: 'Ahorcado',
+      descripcion: 'Pon a prueba tu vocabulario adivinando palabras.',
+      imagen: '../../assets/ahorcado.png',
+      navigator: '/juegos/ahorcado', // Ruta del juego
+    },
+    {
+      nombre: 'Mayor o Menor',
+      descripcion: 'Adivina si el próximo número será mayor o menor.',
+      imagen: '../../../assets/mayor-menor.png',
+      navigator: '/juegos/mayor-menor', // Ruta del juego
+    },
+    {
+      nombre: 'Preguntados',
+      descripcion: 'Responde preguntas y demuestra tus conocimientos.',
+      imagen: '../../../assets/preguntados.webp',
+      navigator: '/juegos/mayor-menor',
+    },
+    {
+      nombre: 'Juego Propio',
+      descripcion: 'Un juego único diseñado por mí.',
+      imagen: '../../../assets/juego-propio.png',
+      navigator: '/juegos/mayor-menor',
+    },
+  ];
+
   constructor(
+    private router: Router,
     private appComponent: AppComponent,
     private sidebarService: SidebarService,
     private authService: AuthService,
@@ -50,26 +79,7 @@ export class HomeComponent implements OnInit {
     this.cdr.detectChanges(); 
   }
 
-  juegos = [
-    {
-      nombre: 'Ahorcado',
-      descripcion: 'Pon a prueba tu vocabulario adivinando palabras.',
-      imagen: '../../assets/ahorcado.png',
-    },
-    {
-      nombre: 'Mayor o Menor',
-      descripcion: 'Adivina si el próximo número será mayor o menor.',
-      imagen: '../../../assets/mayor-menor.png',
-    },
-    {
-      nombre: 'Preguntados',
-      descripcion: 'Responde preguntas y demuestra tus conocimientos.',
-      imagen: '../../../assets/preguntados.webp',
-    },
-    {
-      nombre: 'Juego Propio',
-      descripcion: 'Un juego único diseñado por mí.',
-      imagen: '../../../assets/juego-propio.png',
-    },
-  ];
+  irAJuego(ruta: string): void {
+    this.router.navigate([ruta]);
+  }
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -11,10 +12,7 @@ export class AuthService {
   isLoggedIn$ = this.isLoggedInSubject.asObservable();
 
   constructor() {
-    this.supabase = createClient(
-      'https://dqifizzwkvnblbmreaze.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRxaWZpenp3a3ZuYmxibXJlYXplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0MjE0NzYsImV4cCI6MjA2MDk5NzQ3Nn0.7kvYG1dbLx-4pgseB-Rrr0q5DhyLYqiJcxSnYyIbgJc'
-    );
+    this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
   }
 
   private manejarError(accion: string, error: any): void {

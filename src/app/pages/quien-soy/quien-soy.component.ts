@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { GithubService } from '../../services/github.service';
+import { GithubService } from '../../services/github/github.service';
 import { firstValueFrom } from 'rxjs';
 
 @Component({

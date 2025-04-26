@@ -1,0 +1,296 @@
+.ahorcado-container {
+  text-align: center;
+  font-family: 'Press Start 2P', cursive;
+  color: #d4a5ff;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 10px;
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.6);
+  max-width: 600px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.ahorcado-container h1 {
+  font-size: 2rem;
+  color: #8a2be2;
+  text-shadow: 2px 2px 0px #000, 4px 4px 0px #6b00b6, 6px 6px 0px #000;
+  margin-bottom: 20px;
+}
+
+.ahorcado-container p {
+  font-size: 1.2rem;
+  margin: 10px 0;
+}
+
+.letras {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.letras button {
+  margin: 5px;
+  padding: 10px;
+  font-size: 1rem;
+  font-family: 'Press Start 2P', cursive;
+  cursor: pointer;
+  border: 1px solid #8a2be2;
+  border-radius: 5px;
+  background-color: #373535;
+  color: #d4a5ff;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.letras button:hover:not(:disabled) {
+  background-color: #8a2be2;
+  transform: scale(1.1);
+}
+
+.letras button.disabled {
+  background-color: #6b00b6;
+  color: #888;
+  cursor: not-allowed;
+}
+
+.mensaje {
+  font-size: 1.5rem;
+  color: #ff4d4d;
+  margin-top: 20px;
+  text-shadow: 1px 1px 0px #000, 2px 2px 0px #6b00b6;
+}
+
+.botones-accion {
+  margin-top: 20px;
+}
+
+.botones-accion button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-family: 'Press Start 2P', cursive;
+  color: #fff;
+  background-color: #8a2be2;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.botones-accion button:hover {
+  background-color: #6b00b6;
+  transform: scale(1.1);
+}
+
+.palabra {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #d4a5ff;
+  margin: 10px 0;
+  word-break: break-word;
+  text-align: center;
+}
+
+.stickman {
+  position: relative;
+  width: 200px;
+  height: 350px;
+  margin: 0 auto 20px;
+}
+
+.base {
+  width: 235px;
+  height: 10px;
+  background-color: #8a2be2;
+  position: absolute;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 5px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.pole {
+  width: 10px;
+  height: 250px;
+  background-color: #8a2be2;
+  position: absolute;
+  bottom: 70px;
+  left: 30%;
+  transform: translateX(-50%);
+  border-radius: 5px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.beam {
+  width: 120px;
+  height: 10px;
+  background-color: #8a2be2;
+  position: absolute;
+  top: 21px;
+  left: 57%;
+  transform: translateX(-50%);
+  border-radius: 5px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.rope {
+  width: 2px;
+  height: 40px;
+  background-color: #fff;
+  position: absolute;
+  top: 30px;
+  left: 85%;
+  transform: translateX(-50%);
+}
+
+.head {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  position: absolute;
+  top: 70px;
+  left: 85%;
+  transform: translateX(-50%);
+  background-color: transparent;
+  display: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+.head.visible {
+  display: block;
+}
+
+.eye {
+  position: absolute;
+  font-size: 10px;
+  color: #fff;
+  font-family: 'Press Start 2P', cursive;
+}
+
+.left-eye {
+  top: 5px;
+  left: 7px;
+}
+
+.right-eye {
+  top: 5px;
+  right: 5px;
+}
+
+.mouth {
+  position: absolute;
+  bottom: 1px;
+  left: 50%;
+  transform: translateX(-50%) rotate(90deg); 
+  font-size: 12px;
+  color: #fff;
+  font-family: 'Press Start 2P', cursive;
+}
+
+.body {
+  width: 5px;
+  height: 88px;
+  background-color: #fff;
+  position: absolute;
+  top: 110px;
+  left: 85%;
+  transform: translateX(-50%);
+  display: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.body.visible {
+  display: block;
+}
+
+.left-arm,
+.right-arm {
+  width: 53px;
+  height: 5px;
+  background-color: #fff;
+  position: absolute;
+  top: 135px;
+  display: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.left-arm {
+  left: 75%;
+  transform: translateX(-50%) rotate(-45deg);
+}
+
+.right-arm {
+  left: 95%;
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.left-arm.visible,
+.right-arm.visible {
+  display: block;
+}
+
+.left-leg,
+.right-leg {
+  width: 53px;
+  height: 5px;
+  background-color: #fff;
+  position: absolute;
+  top: 210px;
+  display: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.left-leg {
+  left: 75%;
+  transform: translateX(-50%) rotate(-45deg);
+}
+
+.right-leg {
+  left: 95%;
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.left-leg.visible,
+.right-leg.visible {
+  display: block;
+}
+.dead{
+  width: 50px;
+  height: 3px;
+  background-color: #ff4d4d;
+  position: absolute;
+  top: 110px;
+  left: 85%;
+  transform: translateX(-50%);
+  border-radius: 5px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Posiciona el contenedor del temporizador */
+.timer-circle-container {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+/* Estilo del temporizador */
+.timer-circle {
+  width: 60px; /* Tamaño reducido */
+  height: 60px;
+  border: 3px solid #d4a5ff; /* Color del borde similar al texto */
+  border-radius: 50%; /* Hace que sea un círculo */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px; /* Tamaño de fuente reducido */
+  font-family: 'Press Start 2P', cursive; /* Fuente consistente */
+  font-weight: bold;
+  color: #d4a5ff; /* Color del texto */
+  background-color: #373535; /* Fondo oscuro similar a los botones */
+  text-shadow: 2px 2px 0px #000, 4px 4px 0px #6b00b6; /* Sombra del texto */
+  transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+}

@@ -1,9 +1,9 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { YoutubeService } from './services/youtube.service';
-import { SidebarService } from './services/sidebar.service';
-import { AuthService } from './services/auth.service';
+import { YoutubeService } from './services/youtube/youtube.service';
+import { SidebarService } from './services/sidebar/sidebar.service';
+import { AuthService } from './services/auth/auth.service';
 import { RouterModule, Router } from '@angular/router';
-import { UserService } from './services/user.service';
+import { UserService } from './services/user/user.service';
 
 @Component({
   selector: 'app-root',
