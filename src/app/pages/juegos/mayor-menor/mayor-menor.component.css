@@ -1,0 +1,109 @@
+/* Contenedor principal del juego */
+.mayor-menor-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  font-family: 'Press Start 2P', cursive;
+  color: #d4a5ff;
+  padding: 40px 20px;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 10px;
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.6);
+  max-width: 650px;
+}
+
+/* Contenedor del encabezado */
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+/* Título del juego */
+.header h1 {
+  font-size: 2rem;
+  color: #8a2be2;
+  text-shadow: 2px 2px 0px #000, 4px 4px 0px #6b00b6, 6px 6px 0px #000;
+  margin: 0;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.cartas-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.carta-container {
+  text-align: center;
+}
+
+.carta {
+  width: 100px;
+  height: auto;
+  border-radius: 5px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.mensaje {
+  font-size: 1.5rem;
+  color: #ff4d4d;
+  margin-top: 20px;
+  text-shadow: 1px 1px 0px #000, 2px 2px 0px #6b00b6;
+}
+
+button {
+  margin: 10px 5px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-family: 'Press Start 2P', cursive;
+  color: #fff;
+  background-color: #8a2be2;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.button:hover {
+  background-color: #6b00b6;
+  transform: scale(1.1);
+}
+
+.motivo {
+  font-size: 1.2rem;
+  color: #ff4d4d;
+  margin-top: 10px;
+  text-shadow: 1px 1px 0px #000, 2px 2px 0px #6b00b6;
+}
+
+/* Contenedor del temporizador */
+.timer-circle-container {
+  margin-left: 20px;
+}
+
+/* Estilo del temporizador */
+.timer-circle {
+  width: 50px;
+  height: 50px;
+  border: 3px solid #d4a5ff;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  font-family: 'Press Start 2P', cursive;
+  font-weight: bold;
+  color: #d4a5ff;
+  background-color: #373535;
+  text-shadow: 2px 2px 0px #000, 4px 4px 0px #6b00b6;
+  transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+}

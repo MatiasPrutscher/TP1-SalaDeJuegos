@@ -31,6 +31,10 @@ export const routes: Routes = [
                 path: 'ahorcado',
                 loadComponent: () => import('./pages/juegos/ahorcado/ahorcado.component').then(m => m.AhorcadoComponent)
             },
+            {
+                path: 'mayor-menor',
+                loadComponent: () => import('./pages/juegos/mayor-menor/mayor-menor.component').then(m => m.MayorMenorComponent)
+            }
         ]
     }
 ];

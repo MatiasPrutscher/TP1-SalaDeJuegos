@@ -123,4 +123,23 @@ export class AuthService {
     console.log('El mail ya está registrado.');
     return !!data; // Devuelve true si se encontró un registro
   }
+
+  async obtenerIdUsuario(): Promise<number> {
+    const session = await this.getSession();
+    if (!session?.user?.email) {
+      throw new Error('No hay sesión activa o el usuario no tiene un email asociado.');
+    }
+
+    const { data: usuario, error } = await this.supabase
+      .from('usuarios')
+      .select('id')
+      .eq('email', session.user.email)
+      .single();
+
+    if (error || !usuario) {
+      throw new Error('No se pudo encontrar el usuario en la base de datos.');
+    }
+
+    return usuario.id;
+  }
 }

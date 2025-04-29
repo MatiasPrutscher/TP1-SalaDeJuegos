@@ -5,28 +5,31 @@ import { BehaviorSubject, interval, Subscription } from 'rxjs';
   providedIn: 'root',
 })
 export class TimerService {
-  private tiempoRestante = new BehaviorSubject<number>(60); // Tiempo inicial
-  tiempoRestante$ = this.tiempoRestante.asObservable(); // Observable para suscribirse al tiempo restante
-  private temporizador: Subscription | null = null;
+  private tiempoRestanteSubject = new BehaviorSubject<number>(0);
+  tiempoRestante$ = this.tiempoRestanteSubject.asObservable();
+  private intervalo: Subscription | null = null;
 
-  iniciarTemporizador(duracion: number = 60): void {
-    this.tiempoRestante.next(duracion); // Reinicia el tiempo
-    this.detenerTemporizador(); // Detiene cualquier temporizador previo
+  iniciarTemporizador(segundos: number): void {
+    this.tiempoRestanteSubject.next(segundos);
 
-    this.temporizador = interval(1000).subscribe(() => {
-      const tiempoActual = this.tiempoRestante.value;
+    if (this.intervalo) {
+      this.intervalo.unsubscribe();
+    }
+
+    this.intervalo = interval(1000).subscribe(() => {
+      const tiempoActual = this.tiempoRestanteSubject.value;
       if (tiempoActual > 0) {
-        this.tiempoRestante.next(tiempoActual - 1); // Disminuye el tiempo
+        this.tiempoRestanteSubject.next(tiempoActual - 1);
       } else {
-        this.detenerTemporizador(); // Detiene el temporizador cuando llega a 0
+        this.detenerTemporizador();
       }
     });
   }
 
   detenerTemporizador(): void {
-    if (this.temporizador) {
-      this.temporizador.unsubscribe();
-      this.temporizador = null;
+    if (this.intervalo) {
+      this.intervalo.unsubscribe();
+      this.intervalo = null;
     }
   }
 }

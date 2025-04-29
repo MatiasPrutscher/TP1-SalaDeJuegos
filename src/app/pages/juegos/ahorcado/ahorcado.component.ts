@@ -3,6 +3,7 @@ import { WordService } from '../../../services/words/words.service';
 import { Router } from '@angular/router';
 import { TimerService } from '../../../services/timer/timer.service'; 
 import { CommonModule } from '@angular/common';
+import { PartidasAhorcadoService } from '../../../services/partidas/ahorcado/partidas-ahorcado.service';
 
 @Component({
   selector: 'app-ahorcado',
@@ -30,7 +31,8 @@ export class AhorcadoComponent implements OnInit {
     private wordService: WordService,
     private router: Router,
     private cdr: ChangeDetectorRef,
-    public timerService: TimerService 
+    public timerService: TimerService,
+    private partidasAhorcadoService: PartidasAhorcadoService 
   ) {}
 
   ngOnInit(): void {
@@ -115,22 +117,21 @@ export class AhorcadoComponent implements OnInit {
     }
   }
 
-  ganar(): void {
+  async ganar(): Promise<void> {
     this.jugando = false;
     this.mensaje = '¡Ganaste! ¿Quieres continuar o plantarte?';
 
-  
     const puntosNivel = (this.puntos + this.tiempoRestante) * this.multiplicador;
     this.puntosAcumulados = (this.puntosAcumulados || 0) + puntosNivel;
 
-    this.multiplicador++; 
-    this.nivelesCompletados++; 
+    this.multiplicador++;
+    this.nivelesCompletados++;
 
     this.timerService.detenerTemporizador();
   }
 
-  perder(razon: 'tiempo' | 'intentos'): void {
-    this.jugando = false; 
+  async perder(razon: 'tiempo' | 'intentos'): Promise<void> {
+    this.jugando = false;
 
     if (razon === 'tiempo') {
       this.mensaje = '¡Perdiste! Se acabó el tiempo.';
@@ -139,9 +140,20 @@ export class AhorcadoComponent implements OnInit {
     }
 
     this.puntos = 0;
-    this.multiplicador = 1;
-
     this.timerService.detenerTemporizador();
+
+    try {
+      await this.partidasAhorcadoService.guardarPartida(
+        this.puntosAcumulados,
+        this.nivelesCompletados,
+        'Derrota'
+      );
+      console.log('Partida guardada correctamente al perder.');
+    } catch (error) {
+      console.error('Error al guardar la partida al perder:', error);
+    }
+
+    this.multiplicador = 1;
   }
 
   continuar(): void {
@@ -151,6 +163,15 @@ export class AhorcadoComponent implements OnInit {
   plantarse(): void {
     this.mensaje = `Te plantaste con ${this.puntosAcumulados} puntos.`;
     this.jugando = false;
+
+    this.partidasAhorcadoService
+      .guardarPartida(this.puntosAcumulados, this.nivelesCompletados, 'Victoria')
+      .then(() => {
+        console.log('Partida guardada correctamente al plantarse.');
+      })
+      .catch((error) => {
+        console.error('Error al guardar la partida al plantarse:', error);
+      });
   }
 
   volverAJugar(): void {
