@@ -36,5 +36,10 @@ export const routes: Routes = [
                 loadComponent: () => import('./pages/juegos/mayor-menor/mayor-menor.component').then(m => m.MayorMenorComponent)
             }
         ]
+    },
+    {
+        path: 'chat',
+        loadComponent: () => import('./pages/chat/chat.component').then(m => m.ChatComponent),
+        canActivate: [authGameGuard]
     }
 ];

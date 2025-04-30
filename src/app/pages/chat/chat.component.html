@@ -1,1 +1,33 @@
-<p>chat works!</p>
+<div class="chat-sidebar" [class.desplegado]="!plegado">
+  <div class="chat-header">
+    <h3>Chat Global</h3>
+    <button class="toggle-button" (click)="toggleSidebar()">×</button>
+  </div>
+
+  <div class="mensajes" #mensajesContainer>
+    @for (mensaje of mensajes; track mensaje.id) {
+      <div
+        [class.propietario]="mensaje.usuario_id === usuarioId"
+        class="mensaje"
+      >
+        <p class="autor">{{ mensaje.usuarios?.nombre || 'Anónimo' }}</p>
+        <p class="contenido">{{ mensaje.mensaje }}</p>
+        <p class="fecha">{{ mensaje.created_at | date: 'HH:mm' }}</p>
+      </div>
+    } @empty {
+      <p class="sin-mensajes">No hay mensajes en el chat.</p>
+    }
+  </div>
+
+  <div class="input-container">
+    <input
+      type="text"
+      [(ngModel)]="mensaje"
+      placeholder="Escribe un mensaje..."
+      (keyup.enter)="enviarMensaje()" 
+    />
+    <button class="btn btn-info" (click)="enviarMensaje()">&#10148;</button>
+  </div>
+</div>
+
+<button class="floating-button" (click)="toggleSidebar()">💬</button>

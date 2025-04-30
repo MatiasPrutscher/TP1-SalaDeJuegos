@@ -4,17 +4,20 @@ import { SidebarService } from './services/sidebar/sidebar.service';
 import { AuthService } from './services/auth/auth.service';
 import { RouterModule, Router } from '@angular/router';
 import { UserService } from './services/user/user.service';
+import { FormsModule } from '@angular/forms';
+import { ChatComponent } from './pages/chat/chat.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterModule],
+  imports: [RouterModule, FormsModule, ChatComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
+  plegado: boolean = true; 
   isCollapsed = false;
   public currentVolume: number = 50; // Volumen inicial (50%)
-  public songTitle: string = 'Cargando canción...'; // Nombre de la canción
+  public songTitle: string = 'Cargando canción...'; 
   isLoggedIn: boolean = false;
 
   constructor(
@@ -23,7 +26,7 @@ export class AppComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private userService: UserService,
-    private cdr: ChangeDetectorRef // Inyecta ChangeDetectorRef
+    private cdr: ChangeDetectorRef 
   ) {
     this.sidebarService.isCollapsed$.subscribe(
       (state) => (this.isCollapsed = state)

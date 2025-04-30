@@ -35,8 +35,10 @@
       </button>
     </div>
   </div>
+  @if(isLoggedIn){
+    <app-chat [class.sidebar-desplegada]="!plegado"></app-chat>
+  }
 </div>
-
 <div class="content">
   <router-outlet></router-outlet>
 </div>
