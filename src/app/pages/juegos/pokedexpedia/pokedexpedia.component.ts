@@ -5,6 +5,19 @@ import { TimerService } from '../../../services/timer/timer.service';
 import { Subscription } from 'rxjs';
 import { PartidasPokedexpediaService } from '../../../services/partidas/pokedexpedia/partidas-pokedexpedia.service';
 
+const INITIAL_TIME = 7;
+const POKEMON_GENERATIONS = {
+  GEN_1: { min: 1, max: 151 },
+  GEN_2_3: { min: 1, max: 386 },
+  GEN_9: { min: 1, max: 1025 },
+};
+const PENALTY_EASY = 100;
+const PENALTY_INTERMEDIATE = 200;
+const PENALTY_HARD = 300;
+const POINTS_EASY = 100;
+const POINTS_INTERMEDIATE = 150;
+const POINTS_HARD = 200;
+
 @Component({
   selector: 'app-pokedexpedia',
   imports: [],
@@ -18,7 +31,7 @@ export class PokedexpediaComponent implements OnInit, OnDestroy {
   isGuessed: boolean = false;
   isGameOver: boolean = false;
   disabledOptions: string[] = [];
-  tiempoRestante: number = 7; // Tiempo inicial en segundos
+  tiempoRestante: number = INITIAL_TIME; 
   private timerSubscription: Subscription | null = null;
 
   constructor(
@@ -49,32 +62,39 @@ export class PokedexpediaComponent implements OnInit, OnDestroy {
   }
 
   loadNextQuestion(): void {
-    const randomId = Math.floor(Math.random() * 151) + 1;
+    const randomId = this.getRandomPokemonId();
+
     this.pokeApiService.getPokemon(randomId).subscribe(
       async (pokemon) => {
-        this.currentQuestion = {
-          image: pokemon.sprites.front_default,
-          correctAnswer: pokemon.name,
-          options: await this.generatePokemonOptions(pokemon.name),
-        };
-        this.isGuessed = false;
-        this.disabledOptions = [];
-        this.timerService.iniciarTemporizador(7); 
-        this.cdr.detectChanges();
+        this.setupQuestion(pokemon);
       },
-      (error) => {
-        console.error('Error al obtener Pokémon:', error);
-        this.handleErrorState();
-      }
+      (error) => this.handleApiError(error, 'loadNextQuestion')
     );
+  }
+
+  private getRandomPokemonId(): number {
+    const { min, max } = this.getPokemonIdRange();
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  private async setupQuestion(pokemon: any): Promise<void> {
+    this.currentQuestion = {
+      image: pokemon.sprites.front_default,
+      correctAnswer: pokemon.name,
+      options: await this.generatePokemonOptions(pokemon.name),
+    };
+    this.isGuessed = false;
+    this.disabledOptions = [];
+    this.cdr.detectChanges(); 
+    this.timerService.iniciarTemporizador(INITIAL_TIME); 
   }
 
   subscribeToTimer(): void {
     this.timerSubscription = this.timerService.tiempoRestante$.subscribe((tiempo) => {
       this.tiempoRestante = tiempo;
-      this.cdr.detectChanges(); 
+      this.cdr.detectChanges();
 
-      if (tiempo === 0 && !this.isGameOver) {
+      if (tiempo === 0 && !this.isGameOver && this.currentQuestion) { 
         this.handleTimeOut();
       }
     });
@@ -88,14 +108,16 @@ export class PokedexpediaComponent implements OnInit, OnDestroy {
   }
 
   async generatePokemonOptions(correctName: string): Promise<string[]> {
+    const { min, max } = this.getPokemonIdRange();
     const options = new Set<string>([correctName]);
+
     while (options.size < 4) {
-      const randomId = Math.floor(Math.random() * 151) + 1;
+      const randomId = Math.floor(Math.random() * (max - min + 1)) + min;
       try {
         const pokemon = await this.pokeApiService.getPokemon(randomId).toPromise();
         options.add(pokemon.name);
       } catch (error) {
-        console.error('Error al obtener un Pokémon para las opciones:', error);
+        this.handleApiError(error, 'obtener un Pokémon para las opciones');
       }
     }
     return this.shuffleArray(Array.from(options));
@@ -114,17 +136,37 @@ export class PokedexpediaComponent implements OnInit, OnDestroy {
   }
 
   handleCorrectAnswer(): void {
-    this.score += 100;
+    let points: number;
+
+    if (this.correctGuesses >= 10) {
+      points = POINTS_HARD; 
+    } else if (this.correctGuesses >= 5) {
+      points = POINTS_INTERMEDIATE; 
+    } else {
+      points = POINTS_EASY; 
+    }
+
+    this.score += points;
     this.correctGuesses++;
     this.isGuessed = true;
     this.timerService.detenerTemporizador();
   }
 
   handleIncorrectAnswer(selectedOption: string): void {
-    this.score -= 100;
+    let penalty: number;
+
+    if (this.correctGuesses >= 10) {
+      penalty = PENALTY_HARD; 
+    } else if (this.correctGuesses >= 5) {
+      penalty = PENALTY_INTERMEDIATE; 
+    } else {
+      penalty = PENALTY_EASY; 
+    }
+
+    this.score -= penalty;
     this.disabledOptions.push(selectedOption);
 
-    if (this.score <= -100) {
+    if (this.score <= -1) {
       this.score = 0;
       this.endGame();
     }
@@ -152,7 +194,7 @@ export class PokedexpediaComponent implements OnInit, OnDestroy {
         console.log('Partida guardada correctamente.');
       })
       .catch((error) => {
-        console.error('Error al guardar la partida:', error);
+        this.handleApiError(error, 'guardar la partida');
       });
   }
 
@@ -174,7 +216,7 @@ export class PokedexpediaComponent implements OnInit, OnDestroy {
         console.log('Partida guardada correctamente.');
       })
       .catch((error) => {
-        console.error('Error al guardar la partida:', error);
+        this.handleApiError(error, 'guardar la partida');
       });
   }
 
@@ -182,13 +224,33 @@ export class PokedexpediaComponent implements OnInit, OnDestroy {
     this.router.navigate(['/']);
   }
 
-  handleErrorState(): void {
-    this.currentQuestion = {
-      image: '',
-      correctAnswer: 'Error',
-      options: [],
-    };
+  private handleErrorState(): void {
     this.isGameOver = true;
     this.cdr.detectChanges();
+  }
+
+  private getPokemonIdRange(): { min: number; max: number } {
+    if (this.correctGuesses >= 10) {
+      return POKEMON_GENERATIONS.GEN_9;
+    } else if (this.correctGuesses >= 5) {
+      return POKEMON_GENERATIONS.GEN_2_3;
+    } else {
+      return POKEMON_GENERATIONS.GEN_1;
+    }
+  }
+
+  private handleApiError(error: any, context: string): void {
+    console.error(`Error en ${context}:`, error);
+    this.handleErrorState();
+  }
+
+  get playerLevel(): string {
+    if (this.correctGuesses >= 10) {
+      return 'Difícil';
+    } else if (this.correctGuesses >= 5) {
+      return 'Intermedio';
+    } else {
+      return 'Fácil';
+    }
   }
 }
