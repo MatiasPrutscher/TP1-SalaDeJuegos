@@ -1,0 +1,152 @@
+button {
+    color: white;
+    background-color: #8a2be2;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #6b00b6;
+  }
+  
+  /* Botones deshabilitados */
+  button:disabled {
+    background-color: #6b00b6;
+    color: #888; 
+    cursor: not-allowed; 
+    opacity: 0.6; 
+    border: 1px solid #4a0072;
+  }
+  
+  /* Imagen sombreada */
+  img.shadow {
+    filter: brightness(0) invert(1); 
+    transition: filter 0.3s ease; 
+  }
+  
+  /* Contenedor principal */
+  .preguntados-container {
+    text-align: center;
+    font-family: 'Press Start 2P', cursive;
+    color: #d4a5ff;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 10px;
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.6);
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+  }
+  
+  /* Título */
+  .preguntados-container h2 {
+    font-size: 1.8rem;
+    color: #8a2be2;
+    text-shadow: 2px 2px 0px #000, 4px 4px 0px #6b00b6, 6px 6px 0px #000;
+    margin-bottom: 20px;
+  }
+  
+  /* Imagen del Pokémon */
+  .preguntados-container img {
+    width: 150px;
+    height: auto;
+    margin: 20px 0;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  /* Contenedor de botones en cuadrícula */
+  .options-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 10px; 
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  /* Botones de opciones */
+  .options-container button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-family: 'Press Start 2P', cursive;
+    color: #fff;
+    background-color: #8a2be2;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .options-container button:hover {
+    background-color: #6b00b6;
+    transform: scale(1.1);
+  }
+  
+  /* Mensaje de carga */
+  .preguntados-container p {
+    font-size: 1.2rem;
+    color: #ff4d4d;
+    margin-top: 20px;
+  }
+  
+  /* Puntaje */
+  .preguntados-container h3 {
+    font-size: 1.5rem;
+    color: #d4a5ff;
+    margin-top: 20px;
+    text-shadow: 2px 2px 0px #000, 4px 4px 0px #6b00b6;
+  }
+  
+  /* Botones de acción */
+.botones-accion {
+  margin-top: 20px;
+}
+
+.botones-accion button {
+  margin: 5px 10px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-family: 'Press Start 2P', cursive;
+  color: #fff;
+  background-color: #8a2be2;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.botones-accion button:hover {
+  background-color: #6b00b6;
+  transform: scale(1.1);
+}
+
+/* Contenedor del temporizador */
+.timer-circle-container {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+}
+
+/* Estilo del temporizador */
+.timer-circle {
+  width: 50px;
+  height: 50px;
+  border: 3px solid #d4a5ff;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  font-family: 'Press Start 2P', cursive;
+  font-weight: bold;
+  color: #d4a5ff;
+  background-color: #373535;
+  text-shadow: 2px 2px 0px #000, 4px 4px 0px #6b00b6;
+  transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+}

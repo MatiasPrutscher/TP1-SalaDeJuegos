@@ -34,6 +34,10 @@ export const routes: Routes = [
             {
                 path: 'mayor-menor',
                 loadComponent: () => import('./pages/juegos/mayor-menor/mayor-menor.component').then(m => m.MayorMenorComponent)
+            },
+            {
+                path: 'pokedexpedia',
+                loadComponent: () => import('./pages/juegos/pokedexpedia/pokedexpedia.component').then(m => m.PokedexpediaComponent)
             }
         ]
     },

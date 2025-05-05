@@ -47,10 +47,12 @@ export class AppComponent implements OnInit {
         } else {
           this.songTitle = 'No se encontró el título';
         }
+        this.cdr.detectChanges(); 
       },
       (error) => {
         console.error('Error al obtener el título del video:', error);
         this.songTitle = 'Error al cargar canción';
+        this.cdr.detectChanges(); 
       }
     );
 
@@ -64,7 +66,7 @@ export class AppComponent implements OnInit {
 
     const session = await this.authService.getSession();
     this.isLoggedIn = !!session;
-    this.cdr.detectChanges(); // Fuerza la detección de cambios
+    this.cdr.detectChanges(); 
     console.log('Estado final de isLoggedIn en el onInit:', this.isLoggedIn);
   }
 

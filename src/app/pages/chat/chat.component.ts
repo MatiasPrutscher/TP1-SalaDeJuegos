@@ -22,7 +22,7 @@ export class ChatComponent implements OnInit {
     private mensajesService: MensajesService,
     private authService: AuthService,
     private cdr: ChangeDetectorRef,
-    private renderer: Renderer2 // Para manipular clases del DOM
+    private renderer: Renderer2 
   ) {}
 
   async ngOnInit(): Promise<void> {

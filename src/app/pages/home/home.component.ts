@@ -29,16 +29,16 @@ export class HomeComponent implements OnInit {
       navigator: '/juegos/mayor-menor', // Ruta del juego
     },
     {
-      nombre: 'Preguntados',
-      descripcion: 'Responde preguntas y demuestra tus conocimientos.',
-      imagen: '../../../assets/preguntados.webp',
-      navigator: '/juegos/mayor-menor',
+      nombre: '¿Quien es ese pokémon?',
+      descripcion: 'Demuestra que eres un maestro pokémon.',
+      imagen: '../../../assets/pokedexpedia.png',
+      navigator: '/juegos/pokedexpedia', // Ruta del juego
     },
     {
-      nombre: 'Juego Propio',
+      nombre: 'Galati',
       descripcion: 'Un juego único diseñado por mí.',
       imagen: '../../../assets/juego-propio.png',
-      navigator: '/juegos/mayor-menor',
+      navigator: '/juegos/pokedexpedia', // Ruta del juego
     },
   ];
 

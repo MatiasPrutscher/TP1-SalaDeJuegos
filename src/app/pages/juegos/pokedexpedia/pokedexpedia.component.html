@@ -1,0 +1,60 @@
+<div class="preguntados-container">
+  <!-- Temporizador en la esquina superior derecha -->
+  <div class="timer-circle-container">
+    <div class="timer-circle">{{ tiempoRestante }}</div>
+  </div>
+
+  <!-- Pregunta: ¿Quién es este Pokémon? -->
+  @if (currentQuestion && !isGuessed && !isGameOver) {
+    <h2>¿Quién es este Pokémon?</h2>
+    <img [src]="currentQuestion?.image" [class.shadow]="!isGuessed" alt="Pokémon" />
+    <div class="options-container">
+      @for (option of currentQuestion.options; track $index) {
+        <button 
+          [disabled]="disabledOptions.includes(option)" 
+          (click)="checkAnswer(option)">
+          {{ option }}
+        </button>
+      }
+    </div>
+  }
+
+  <!-- Mensaje de victoria -->
+  @if (isGuessed) {
+    <h2>¡Correcto! Es {{ currentQuestion?.correctAnswer }}</h2>
+    <img [src]="currentQuestion?.image" alt="Pokémon" />
+    <div class="botones-accion">
+      <button (click)="continuar()">Continuar</button>
+      <button (click)="plantarse()">Plantarse</button>
+    </div>
+  }
+
+  <!-- Mensaje de derrota -->
+  @if (isGameOver && score === 0) {
+    <h2>¡Perdiste!</h2>
+    <p>El Pokémon era: <strong>{{ currentQuestion?.correctAnswer }}</strong></p>
+    <img [src]="currentQuestion?.image" alt="Pokémon perdido" />
+    <div class="botones-accion">
+      <button (click)="reiniciar()">Volver a Jugar</button>
+      <button (click)="volverAlHome()">Volver al Home</button>
+    </div>
+  }
+
+  <!-- Mensaje de plantarse -->
+  @if (isGameOver && score > 0) {
+    <h2>Te plantaste con {{ score }} puntos.</h2>
+    <p>Pokémon adivinados: {{ correctGuesses }}</p>
+    <div class="botones-accion">
+      <button (click)="reiniciar()">Volver a Jugar</button>
+      <button (click)="volverAlHome()">Volver al Home</button>
+    </div>
+  }
+
+  <!-- Mensaje de carga -->
+  @if (!currentQuestion && !isGameOver) {
+    <p>Cargando pregunta...</p>
+  }
+
+  <h3>Puntaje: {{ score }}</h3>
+  <h3>Pokémon adivinados: {{ correctGuesses }}</h3>
+</div>
