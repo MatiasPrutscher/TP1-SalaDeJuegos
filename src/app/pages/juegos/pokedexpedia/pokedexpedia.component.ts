@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject, OnDestroy } from '@angular/core';
 import { PokeApiService } from '../../../services/pokeapi/pokeapi.service';
 import { Router } from '@angular/router';
 import { TimerService } from '../../../services/timer/timer.service';
@@ -20,27 +20,26 @@ const POINTS_HARD = 200;
 
 @Component({
   selector: 'app-pokedexpedia',
-  imports: [],
+
   templateUrl: './pokedexpedia.component.html',
   styleUrls: ['./pokedexpedia.component.css'],
 })
 export class PokedexpediaComponent implements OnInit, OnDestroy {
+  private pokeApiService = inject(PokeApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private router = inject(Router);
+  private timerService = inject(TimerService);
+  private partidasPokedexpediaService = inject(PartidasPokedexpediaService);
+
   currentQuestion: any = null;
   score: number = 0;
   correctGuesses: number = 0;
   isGuessed: boolean = false;
   isGameOver: boolean = false;
   disabledOptions: string[] = [];
-  tiempoRestante: number = INITIAL_TIME; 
+  tiempoRestante: number = INITIAL_TIME;
   private timerSubscription: Subscription | null = null;
-
-  constructor(
-    private pokeApiService: PokeApiService,
-    private cdr: ChangeDetectorRef,
-    private router: Router,
-    private timerService: TimerService,
-    private partidasPokedexpediaService: PartidasPokedexpediaService 
-  ) {}
+  highestScore: number = 0;
 
   ngOnInit(): void {
     this.resetGameState();
@@ -55,19 +54,18 @@ export class PokedexpediaComponent implements OnInit, OnDestroy {
   resetGameState(): void {
     this.score = 0;
     this.correctGuesses = 0;
+    this.highestScore = 0;
     this.isGuessed = false;
     this.isGameOver = false;
     this.disabledOptions = [];
-    this.timerService.detenerTemporizador(); 
+    this.timerService.detenerTemporizador();
   }
 
   loadNextQuestion(): void {
     const randomId = this.getRandomPokemonId();
 
     this.pokeApiService.getPokemon(randomId).subscribe(
-      async (pokemon) => {
-        this.setupQuestion(pokemon);
-      },
+      async (pokemon) => this.setupQuestion(pokemon),
       (error) => this.handleApiError(error, 'loadNextQuestion')
     );
   }
@@ -85,8 +83,8 @@ export class PokedexpediaComponent implements OnInit, OnDestroy {
     };
     this.isGuessed = false;
     this.disabledOptions = [];
-    this.cdr.detectChanges(); 
-    this.timerService.iniciarTemporizador(INITIAL_TIME); 
+    this.cdr.detectChanges();
+    this.timerService.iniciarTemporizador(INITIAL_TIME);
   }
 
   subscribeToTimer(): void {
@@ -94,17 +92,15 @@ export class PokedexpediaComponent implements OnInit, OnDestroy {
       this.tiempoRestante = tiempo;
       this.cdr.detectChanges();
 
-      if (tiempo === 0 && !this.isGameOver && this.currentQuestion) { 
+      if (tiempo === 0 && !this.isGameOver && this.currentQuestion) {
         this.handleTimeOut();
       }
     });
   }
 
   unsubscribeFromTimer(): void {
-    if (this.timerSubscription) {
-      this.timerSubscription.unsubscribe();
-      this.timerSubscription = null;
-    }
+    this.timerSubscription?.unsubscribe();
+    this.timerSubscription = null;
   }
 
   async generatePokemonOptions(correctName: string): Promise<string[]> {
@@ -117,7 +113,7 @@ export class PokedexpediaComponent implements OnInit, OnDestroy {
         const pokemon = await this.pokeApiService.getPokemon(randomId).toPromise();
         options.add(pokemon.name);
       } catch (error) {
-        this.handleApiError(error, 'obtener un Pokémon para las opciones');
+        this.handleApiError(error, 'generar opciones de Pokémon');
       }
     }
     return this.shuffleArray(Array.from(options));
@@ -136,31 +132,31 @@ export class PokedexpediaComponent implements OnInit, OnDestroy {
   }
 
   handleCorrectAnswer(): void {
-    let points: number;
+    let points = POINTS_EASY;
 
     if (this.correctGuesses >= 10) {
-      points = POINTS_HARD; 
+      points = POINTS_HARD;
     } else if (this.correctGuesses >= 5) {
-      points = POINTS_INTERMEDIATE; 
-    } else {
-      points = POINTS_EASY; 
+      points = POINTS_INTERMEDIATE;
     }
 
     this.score += points;
     this.correctGuesses++;
     this.isGuessed = true;
     this.timerService.detenerTemporizador();
+
+    if (this.score > this.highestScore) {
+      this.highestScore = this.score;
+    }
   }
 
   handleIncorrectAnswer(selectedOption: string): void {
-    let penalty: number;
+    let penalty = PENALTY_EASY;
 
     if (this.correctGuesses >= 10) {
-      penalty = PENALTY_HARD; 
+      penalty = PENALTY_HARD;
     } else if (this.correctGuesses >= 5) {
-      penalty = PENALTY_INTERMEDIATE; 
-    } else {
-      penalty = PENALTY_EASY; 
+      penalty = PENALTY_INTERMEDIATE;
     }
 
     this.score -= penalty;
@@ -173,9 +169,9 @@ export class PokedexpediaComponent implements OnInit, OnDestroy {
   }
 
   handleTimeOut(): void {
-    this.score = 0; 
-    this.endGame(); 
-    this.cdr.detectChanges(); 
+    this.score = 0;
+    this.endGame();
+    this.cdr.detectChanges();
   }
 
   continuar(): void {
@@ -184,18 +180,12 @@ export class PokedexpediaComponent implements OnInit, OnDestroy {
 
   plantarse(): void {
     this.isGameOver = true;
-    this.timerService.detenerTemporizador(); 
+    this.timerService.detenerTemporizador();
 
     const resultado = 'Victoria';
-
-    this.partidasPokedexpediaService
-      .guardarPartida(this.score, this.correctGuesses, resultado)
-      .then(() => {
-        console.log('Partida guardada correctamente.');
-      })
-      .catch((error) => {
-        this.handleApiError(error, 'guardar la partida');
-      });
+    this.partidasPokedexpediaService.guardarPartida(this.score, this.correctGuesses, resultado)
+      .then(() => console.log('Partida guardada correctamente.'))
+      .catch((error) => this.handleApiError(error, 'guardar la partida'));
   }
 
   reiniciar(): void {
@@ -206,18 +196,13 @@ export class PokedexpediaComponent implements OnInit, OnDestroy {
   endGame(): void {
     this.isGameOver = true;
     this.isGuessed = false;
-    this.timerService.detenerTemporizador(); 
+    this.timerService.detenerTemporizador();
 
     const resultado = this.score > 0 ? 'Victoria' : 'Derrota';
 
-    this.partidasPokedexpediaService
-      .guardarPartida(this.score, this.correctGuesses, resultado)
-      .then(() => {
-        console.log('Partida guardada correctamente.');
-      })
-      .catch((error) => {
-        this.handleApiError(error, 'guardar la partida');
-      });
+    this.partidasPokedexpediaService.guardarPartida(this.highestScore, this.correctGuesses, resultado)
+      .then(() => console.log('Partida guardada correctamente.'))
+      .catch((error) => this.handleApiError(error, 'guardar la partida'));
   }
 
   volverAlHome(): void {

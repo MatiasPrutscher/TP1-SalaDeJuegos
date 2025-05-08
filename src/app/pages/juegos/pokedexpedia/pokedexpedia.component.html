@@ -4,6 +4,11 @@
     <div class="timer-circle">{{ tiempoRestante }}</div>
   </div>
 
+  <!-- Mensaje de carga -->
+  @if (!currentQuestion && !isGameOver) {
+    <p>Cargando pregunta...</p>
+  }
+
   <!-- Pregunta: ¿Quién es este Pokémon? -->
   @if (currentQuestion && !isGuessed && !isGameOver) {
     <h2>¿Quién es este Pokémon?</h2>
@@ -17,6 +22,12 @@
         </button>
       }
     </div>
+  }
+
+  <!-- Mensaje de error -->
+  @if (isGameOver && !currentQuestion) {
+    <h2>Ocurrió un error al cargar la pregunta. Intenta nuevamente.</h2>
+    <button (click)="reiniciar()">Reintentar</button>
   }
 
   <!-- Mensaje de victoria -->
@@ -33,6 +44,7 @@
   @if (isGameOver && score === 0) {
     <h2>¡Perdiste!</h2>
     <p>El Pokémon era: <strong>{{ currentQuestion?.correctAnswer }}</strong></p>
+    <p>Tu mayor puntaje alcanzado fue: <strong>{{ highestScore }}</strong></p> <!-- Nuevo -->
     <img [src]="currentQuestion?.image" alt="Pokémon perdido" />
     <div class="botones-accion">
       <button (click)="reiniciar()">Volver a Jugar</button>
@@ -48,11 +60,6 @@
       <button (click)="reiniciar()">Volver a Jugar</button>
       <button (click)="volverAlHome()">Volver al Home</button>
     </div>
-  }
-
-  <!-- Mensaje de carga -->
-  @if (!currentQuestion && !isGameOver) {
-    <p>Cargando pregunta...</p>
   }
 
   <h3>Puntaje: {{ score }}</h3>

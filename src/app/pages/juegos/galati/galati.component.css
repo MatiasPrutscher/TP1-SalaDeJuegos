@@ -1,0 +1,12 @@
+#game-container {
+  width: 800px; 
+  height: 600px; 
+  margin: 120px auto; /* Baja el canvas 120px desde la parte superior */
+  background-color: black; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid white; 
+  border-radius: 15px; /* Redondea los bordes del contenedor */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Agrega una sombra para mayor estética */
+}

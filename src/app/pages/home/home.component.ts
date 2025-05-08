@@ -38,7 +38,7 @@ export class HomeComponent implements OnInit {
       nombre: 'Galati',
       descripcion: 'Un juego único diseñado por mí.',
       imagen: '../../../assets/juego-propio.png',
-      navigator: '/juegos/pokedexpedia', // Ruta del juego
+      navigator: '/juegos/galati', // Ruta del juego
     },
   ];
 

@@ -38,6 +38,10 @@ export const routes: Routes = [
             {
                 path: 'pokedexpedia',
                 loadComponent: () => import('./pages/juegos/pokedexpedia/pokedexpedia.component').then(m => m.PokedexpediaComponent)
+            },
+            {
+                path: 'galati',
+                loadComponent: () => import('./pages/juegos/galati/galati.component').then(m => m.GalatiComponent)
             }
         ]
     },
