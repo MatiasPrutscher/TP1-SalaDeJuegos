@@ -77,7 +77,7 @@ export class PokedexpediaComponent implements OnInit, OnDestroy {
 
   private async setupQuestion(pokemon: any): Promise<void> {
     this.currentQuestion = {
-      image: pokemon.sprites.front_default,
+      image: pokemon.sprite,
       correctAnswer: pokemon.name,
       options: await this.generatePokemonOptions(pokemon.name),
     };

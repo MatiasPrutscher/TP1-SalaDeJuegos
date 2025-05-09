@@ -134,9 +134,9 @@ export class AhorcadoComponent implements OnInit {
     this.jugando = false;
 
     if (razon === 'tiempo') {
-      this.mensaje = '¡Perdiste! Se acabó el tiempo.';
+      this.mensaje = `¡Perdiste! Se acabó el tiempo. La palabra era: ${this.palabraOculta}`;
     } else if (razon === 'intentos') {
-      this.mensaje = '¡Perdiste! Te quedaste sin intentos.';
+      this.mensaje = `¡Perdiste! Te quedaste sin intentos. La palabra era: ${this.palabraOculta}`;
     }
 
     this.puntos = 0;

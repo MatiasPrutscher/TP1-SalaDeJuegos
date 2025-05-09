@@ -20,6 +20,7 @@ export class MayorMenorComponent implements OnInit, OnDestroy {
   jugando = true;
   motivoPerdida = '';
   tiempoRestante = 5;
+  cartasAdivinadas: any[] = []; // Nueva propiedad para almacenar las cartas adivinadas
   private timerSubscription: Subscription | null = null;
 
   constructor(
@@ -83,6 +84,7 @@ export class MayorMenorComponent implements OnInit, OnDestroy {
 
     if (acierto) {
       this.aciertos++;
+      this.cartasAdivinadas.push(this.cartaActual); // Agregar la carta actual al arreglo
       this.cartaActual = this.cartaSiguiente;
       await this.cargarSiguienteCarta();
       this.iniciarTemporizador();
@@ -123,6 +125,7 @@ export class MayorMenorComponent implements OnInit, OnDestroy {
     this.mensaje = '';
     this.jugando = true;
     this.motivoPerdida = '';
+    this.cartasAdivinadas = []; // Reiniciar el arreglo al comenzar un nuevo juego
   }
 
   ngOnDestroy(): void {

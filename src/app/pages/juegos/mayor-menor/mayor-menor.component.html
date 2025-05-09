@@ -20,6 +20,15 @@
     }
   </div>
 
+  <div class="cartas-adivinadas">
+    <h3>Cartas Adivinadas: {{cartasAdivinadas.length}}</h3>
+    @for (carta of cartasAdivinadas; track $index) {
+      <div class="carta-adivinada">
+        <img [src]="carta.image" alt="Carta adivinada" class="carta" />
+      </div>
+    }
+  </div>
+
   @if (jugando) {
     <div class="botones-accion">
       <button (click)="adivinar(true)">Mayor</button>

@@ -107,3 +107,20 @@ button {
   text-shadow: 2px 2px 0px #000, 4px 4px 0px #6b00b6;
   transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
 }
+
+.cartas-adivinadas {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.carta-adivinada {
+  display: inline-block;
+  margin: 5px;
+}
+
+.carta-adivinada img {
+  width: 50px;
+  height: auto;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}

@@ -1,50 +1,61 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { environment } from '../../../environments/environment';
+import { Observable, from, of } from 'rxjs';
+import { map, catchError, shareReplay } from 'rxjs/operators';
 
-@Injectable({
-  providedIn: 'root',
-})
+interface BasicInfo {
+  name: string;
+  sprite: string;
+}
+
+@Injectable({ providedIn: 'root' })
 export class PokeApiService {
-  private apiUrl = 'https://pokeapi.co/api/v2';
-  private cache: Map<number, any> = new Map(); // Caché en memoria
+  private supabase: SupabaseClient;
+  private cache = new Map<number, Observable<BasicInfo | null>>();
 
-  constructor(private http: HttpClient) {}
-
-  // Obtener datos completos del Pokémon
-  getPokemon(id: number): Observable<any> {
-    if (this.cache.has(id)) {
-      return of(this.cache.get(id)); // Retornar desde el caché si ya existe
-    }
-
-    return this.http.get(`${this.apiUrl}/pokemon/${id}`).pipe(
-      map((data) => {
-        this.cache.set(id, data); // Guardar en el caché
-        return data;
-      }),
-      catchError((error) => {
-        console.error(`Error al obtener el Pokémon con ID ${id}:`, error);
-        return of(null); // Manejo de errores
-      })
+  constructor() {
+    this.supabase = createClient(
+      environment.supabaseUrl,
+      environment.supabaseKey
     );
   }
 
-  // Obtener solo el nombre y el sprite del Pokémon
-  getPokemonBasicInfo(id: number): Observable<any> {
+  getPokemonBasicInfo(id: number): Observable<BasicInfo | null> {
     if (this.cache.has(id)) {
-      const cachedData = this.cache.get(id);
-      return of({
-        name: cachedData.name,
-        sprite: cachedData.sprites.other['official-artwork'].front_default || cachedData.sprites.front_default,
-      });
+      return this.cache.get(id)!;
     }
 
-    return this.getPokemon(id).pipe(
-      map((data) => ({
-        name: data.name,
-        sprite: data.sprites.other['official-artwork'].front_default || data.sprites.front_default,
-      }))
+    const request$ = from(
+      this.supabase
+        .from('pokedex')
+        .select('nombre, imagen_url')
+        .eq('id_pokedex', id)
+        .single()
+    ).pipe(
+      map(({ data, error }) => {
+        if (error || !data) {
+          console.error(`Error al leer id=${id} de pokedex:`, error);
+          return null;
+        }
+        const row = data as any;
+        return {
+          name: row.nombre as string,
+          sprite: row.imagen_url as string
+        };
+      }),
+      catchError(err => {
+        console.error(`Error en Supabase para id=${id}:`, err);
+        return of(null);
+      }),
+      shareReplay({ bufferSize: 1, refCount: true })
     );
+
+    this.cache.set(id, request$);
+    return request$;
+  }
+
+  getPokemon(id: number): Observable<any> {
+    return this.getPokemonBasicInfo(id);
   }
 }
