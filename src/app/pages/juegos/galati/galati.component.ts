@@ -1,5 +1,7 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import Phaser from 'phaser';
+import { PartidasGalatiService } from '../../../services/partidas/galati/partidas-galati.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-galati',
@@ -9,9 +11,9 @@ import Phaser from 'phaser';
 })
 export class GalatiComponent implements OnInit {
   private game!: Phaser.Game;
-  constructor(private ngZone: NgZone) {}
 
-  // Inicializa el juego Phaser
+  constructor(private ngZone: NgZone, private partidasGalatiService: PartidasGalatiService, private router: Router) {}
+
   ngOnInit() {
     this.ngZone.runOutsideAngular(() => {
       this.game = new Phaser.Game({
@@ -27,13 +29,22 @@ export class GalatiComponent implements OnInit {
           mode: Phaser.Scale.FIT,
           autoCenter: Phaser.Scale.CENTER_BOTH
         },
-        scene: [GalatiScene_WithLives]
+        scene: [new GalatiScene_WithLives(this.partidasGalatiService, this.router)] // Pasa el router aquí
       });
     });
   }
 }
 
 class GalatiScene_WithLives extends Phaser.Scene {
+  private partidasGalatiService: PartidasGalatiService;
+  private router: Router;
+
+  constructor(partidasGalatiService: PartidasGalatiService, router: Router) {
+    super({ key: 'GalatiScene_WithLives' });
+    this.partidasGalatiService = partidasGalatiService;
+    this.router = router;
+  }
+
   // Parametros configurables
   private readonly escalaJugador = 0.05;
   private readonly velocidadDisparoY = -300;
@@ -79,10 +90,9 @@ class GalatiScene_WithLives extends Phaser.Scene {
   private readonly decrementoDuracionMovimiento = 200;
   private nivelEnProgreso = true; 
 
-  // Configura los parametros iniciales del juego
-  constructor() {
-    super({ key: 'GalatiScene_WithLives' });
-  }
+  // Variables para estadísticas
+  private disparosRealizados = 0;
+  private enemigosDestruidos = 0;
 
   // Carga los recursos necesarios para el juego
   preload() {
@@ -121,6 +131,7 @@ class GalatiScene_WithLives extends Phaser.Scene {
       this.grupoDisparos.create(this.jugador.x, this.jugador.y - 20, 'disparo')
         .setVelocityY(this.velocidadDisparoY)
         .setScale(this.escalaDisparo);
+      this.disparosRealizados++;
     });
 
     // Crear enemigos
@@ -180,6 +191,7 @@ class GalatiScene_WithLives extends Phaser.Scene {
         disparo.destroy();
         enemigo.destroy();
         this.actualizarPuntuacion(this.incrementoPuntuacion);
+        this.enemigosDestruidos++;
       }
     );
 
@@ -199,17 +211,26 @@ class GalatiScene_WithLives extends Phaser.Scene {
     this.eventoDisparosEnemigos = this.time.addEvent({
       delay: 1000, 
       callback: () => {
-        const enemigo = Phaser.Utils.Array.GetRandom(this.datosEnemigos).sprite;
-        if (enemigo.active) {
-          const disparo = this.disparosEnemigos.create(enemigo.x, enemigo.y, 'disparoEnemigo')
-            .setVelocityY(this.velocidadDisparoEnemigoY) 
-            .setScale(this.escalaDisparoEnemigo); 
+        // Selecciona un enemigo aleatorio
+        const enemigoData = Phaser.Utils.Array.GetRandom(this.datosEnemigos);
 
-          this.physics.add.overlap(disparo, this.jugador, () => {
-            disparo.destroy(); 
-            this.perderVida(); 
-          });
+        // Verifica que el enemigo exista y que su sprite esté activo
+        if (!enemigoData || !enemigoData.sprite || !enemigoData.sprite.active) {
+          return; // Si no es válido, no hace nada
         }
+
+        const enemigo = enemigoData.sprite;
+
+        // Crea el disparo del enemigo
+        const disparo = this.disparosEnemigos.create(enemigo.x, enemigo.y, 'disparoEnemigo')
+          .setVelocityY(this.velocidadDisparoEnemigoY) 
+          .setScale(this.escalaDisparoEnemigo); 
+
+        // Configura la colisión del disparo con el jugador
+        this.physics.add.overlap(disparo, this.jugador, () => {
+          disparo.destroy(); 
+          this.perderVida(); 
+        });
       },
       loop: true
     });
@@ -280,23 +301,51 @@ class GalatiScene_WithLives extends Phaser.Scene {
     this.physics.pause();
     this.jugador.setVisible(false);
 
-    if (this.eventoDisparosEnemigos) {
-      this.eventoDisparosEnemigos.remove(false);
-    }
+    // Guardar datos de la partida
+    const precision = this.disparosRealizados
+      ? (this.enemigosDestruidos / this.disparosRealizados) * 100
+      : undefined;
 
-    this.add.text(this.scale.width / 2, this.scale.height / 2, 'GAME OVER', {
+    this.partidasGalatiService
+      .guardarPartida(this.puntuacion, this.nivel, this.enemigosDestruidos, this.disparosRealizados, precision)
+      .then(() => console.log('Partida guardada correctamente.'))
+      .catch((error) => console.error('Error al guardar la partida:', error));
+
+    // Muestra el texto de "Game Over"
+    const gameOverText = this.add.text(this.scale.width / 2, this.scale.height / 2 - 50, 'GAME OVER', {
       fontSize: '40px',
       color: '#ff0000',
-      fontStyle: 'bold'
+      fontStyle: 'bold',
     }).setOrigin(0.5);
 
-    this.datosEnemigos.forEach(dato => {
-      dato.sprite.destroy();
+    // Boton para volver a jugar
+    const replayButton = this.add.text(this.scale.width / 2, this.scale.height / 2 + 20, 'Volver a Jugar', {
+      fontSize: '30px',
+      color: '#ffffff',
+      backgroundColor: '#000000',
+      padding: { x: 10, y: 5 },
+    }).setOrigin(0.5).setInteractive();
+
+    replayButton.on('pointerdown', () => {
+      this.reiniciarJuego();
+      this.scene.restart();
     });
-    this.datosEnemigos = [];
+
+    // Boton para volver al home
+    const homeButton = this.add.text(this.scale.width / 2, this.scale.height / 2 + 80, 'Volver al Home', {
+      fontSize: '30px',
+      color: '#ffffff',
+      backgroundColor: '#000000',
+      padding: { x: 10, y: 5 },
+    }).setOrigin(0.5).setInteractive();
+
+    homeButton.on('pointerdown', () => {
+      this.scene.stop();
+      this.router.navigate(['/']);
+    });
   }
 
-  // Actualiza las vidas visuales en pantalla
+  // Actualiza las vidas en pantalla
   private actualizarVidasVisuales() {
     this.grupoVidas.clear(true, true);
 
@@ -349,5 +398,26 @@ class GalatiScene_WithLives extends Phaser.Scene {
     if (this.debeDesplazar) {
       this.debeDesplazar = false;
     }
+  }
+
+  // Restablece las variables del juego
+  private reiniciarJuego() {
+    // Restablecer variables del juego
+    this.vidas = this.vidasIniciales;
+    this.puntuacion = 0;
+    this.puntuacionNivel = 0;
+    this.nivel = 1;
+    this.velocidadEnemigosX = 100;
+    this.duracionMovimientoEnemigos = 2000;
+    this.filasEnemigos = 3;
+    this.columnasEnemigos = 5;
+    this.enemigosDestruidos = 0;
+    this.disparosRealizados = 0;
+
+    // Limpiar enemigos y disparos
+    this.datosEnemigos.forEach(dato => dato.sprite.destroy());
+    this.datosEnemigos = [];
+    this.grupoDisparos.clear(true, true);
+    this.disparosEnemigos.clear(true, true);
   }
 }
