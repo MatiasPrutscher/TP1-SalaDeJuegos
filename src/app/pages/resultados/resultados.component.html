@@ -4,7 +4,7 @@
   @if (cargando) {
     <p>Cargando resultados...</p>
   } @else {
-    @for (juego of ['partidas_ahorcado', 'partidas_mayor_menor', 'partidas_galati', 'partidas_pokedexpedia']; track $index) {
+    @for (juego of ['partidas_ahorcado', 'partidas_mayor_menor', 'partidas_galati']; track $index) {
       <div class="tabla-resultados">
         <h2>Resultados de {{ juego | titlecase }}</h2>
         <table>
@@ -32,8 +32,6 @@
                       Cartas Acertadas: {{ resultado.cartas_acertadas }}
                     } @else if (juego === 'partidas_galati') {
                       Enemigos Destruidos: {{ resultado.enemigos_destruidos }}
-                    } @else if (juego === 'partidas_pokedexpedia') {
-                      Pokémon Adivinados: {{ resultado.pokemons_adivinados }}
                     }
                   </td>
                 </tr>
@@ -43,5 +41,59 @@
         </table>
       </div>
     }
+
+    <div class="tabla-resultados" *ngIf="resultados['partidas_pokedexpedia']">
+      <h2>Resultados de Pokedexpedia - Clásico</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Jugador</th>
+            <th>Puntaje</th>
+            <th>Pokémon Adivinados</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (!resultados['partidas_pokedexpedia'].clasico.length) {
+            <tr>
+              <td colspan="3">No hay resultados disponibles.</td>
+            </tr>
+          } @else {
+            @for (resultado of resultados['partidas_pokedexpedia'].clasico; track resultado.id) {
+              <tr>
+                <td>{{ resultado.jugador }}</td>
+                <td>{{ resultado.puntos }}</td>
+                <td>{{ resultado.pokemons_adivinados }}</td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+
+      <h2>Resultados de Pokedexpedia - Muerte Súbita</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Jugador</th>
+            <th>Puntaje</th>
+            <th>Pokémon Adivinados</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (!resultados['partidas_pokedexpedia'].muerteSubita.length) {
+            <tr>
+              <td colspan="3">No hay resultados disponibles.</td>
+            </tr>
+          } @else {
+            @for (resultado of resultados['partidas_pokedexpedia'].muerteSubita; track resultado.id) {
+              <tr>
+                <td>{{ resultado.jugador }}</td>
+                <td>{{ resultado.puntos }}</td>
+                <td>{{ resultado.pokemons_adivinados }}</td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
   }
 </div>

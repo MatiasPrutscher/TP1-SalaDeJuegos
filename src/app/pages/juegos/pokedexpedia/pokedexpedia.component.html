@@ -1,68 +1,69 @@
 <div class="preguntados-container">
-  <!-- Temporizador en la esquina superior derecha -->
-  <div class="timer-circle-container">
-    <div class="timer-circle">{{ tiempoRestante }}</div>
-  </div>
-
-  <!-- Mensaje de carga -->
-  @if (!currentQuestion && !isGameOver) {
-    <p>Cargando pregunta...</p>
+  @if (suddenDeathMode === null) {
+    <h2>Seleccione un modo de juego</h2>
+    <hr>
+    <div class="mode-select">
+      <button (click)="selectMode(false)">Modo Clásico</button>
+      <hr>
+      <button (click)="selectMode(true)">Muerte Súbita</button>
+    </div>
+    <hr>
   }
 
-  <!-- Pregunta: ¿Quién es este Pokémon? -->
-  @if (currentQuestion && !isGuessed && !isGameOver) {
-    <h2>¿Quién es este Pokémon?</h2>
-    <img [src]="currentQuestion?.image" [class.shadow]="!isGuessed" alt="Pokémon" />
-    <div class="options-container">
-      @for (option of currentQuestion.options; track $index) {
-        <button 
-          [disabled]="disabledOptions.includes(option)" 
-          (click)="checkAnswer(option)">
-          {{ option }}
-        </button>
+  @if (suddenDeathMode !== null) {
+    <div class="timer-circle-container">
+      <div class="timer-circle">{{ tiempoRestante }}</div>
+    </div>
+
+    @if (!currentQuestion && !isGameOver) {
+      <p>Cargando pregunta...</p>
+    }
+
+    @if (currentQuestion && !isGuessed && !isGameOver) {
+      <h2>¿Quién es este Pokémon?</h2>
+      <img [src]="currentQuestion.image" [class.shadow]="!isGuessed" alt="Pokémon" />
+      <div class="options-container">
+        @for (opt of currentQuestion.options; track $index) {
+          <button [disabled]="disabledOptions.includes(opt)" (click)="checkAnswer(opt)">
+            {{ opt }}
+          </button>
+        }
+      </div>
+    }
+
+    @if (isGuessed) {
+      <h2>¡Correcto! Es {{ currentQuestion.correctAnswer }}</h2>
+      <img [src]="currentQuestion.image" alt="Pokémon" />
+      @if (!suddenDeathMode) {
+        <div class="botones-accion">
+          <button (click)="continuar()">Continuar</button>
+          <button (click)="plantarse()">Plantarse</button>
+        </div>
       }
-    </div>
-  }
+    }
 
-  <!-- Mensaje de error -->
-  @if (isGameOver && !currentQuestion) {
-    <h2>Ocurrió un error al cargar la pregunta. Intenta nuevamente.</h2>
-    <button (click)="reiniciar()">Reintentar</button>
-  }
+    @if (isGameOver && (score === 0 || suddenDeathMode)) {
+      <h2>¡Perdiste!</h2>
+      <p>El Pokémon era: <strong>{{ currentQuestion?.correctAnswer }}</strong></p>
+      <p>Tu mayor puntaje alcanzado fue: <strong>{{ highestScore }}</strong></p>
+      <img [src]="currentQuestion?.image" alt="Pokémon perdido" />
+      <div class="botones-accion">
+        <button (click)="reiniciar()">Volver a Jugar</button>
+        <button (click)="volverAlHome()">Volver al Home</button>
+      </div>
+    }
 
-  <!-- Mensaje de victoria -->
-  @if (isGuessed) {
-    <h2>¡Correcto! Es {{ currentQuestion?.correctAnswer }}</h2>
-    <img [src]="currentQuestion?.image" alt="Pokémon" />
-    <div class="botones-accion">
-      <button (click)="continuar()">Continuar</button>
-      <button (click)="plantarse()">Plantarse</button>
-    </div>
-  }
+    @if (isGameOver && !suddenDeathMode && score > 0) {
+      <h2>Te plantaste con {{ score }} puntos.</h2>
+      <p>Pokémon adivinados: {{ correctGuesses }}</p>
+      <div class="botones-accion">
+        <button (click)="reiniciar()">Volver a Jugar</button>
+        <button (click)="volverAlHome()">Volver al Home</button>
+      </div>
+    }
 
-  <!-- Mensaje de derrota -->
-  @if (isGameOver && score === 0) {
-    <h2>¡Perdiste!</h2>
-    <p>El Pokémon era: <strong>{{ currentQuestion?.correctAnswer }}</strong></p>
-    <p>Tu mayor puntaje alcanzado fue: <strong>{{ highestScore }}</strong></p> <!-- Nuevo -->
-    <img [src]="currentQuestion?.image" alt="Pokémon perdido" />
-    <div class="botones-accion">
-      <button (click)="reiniciar()">Volver a Jugar</button>
-      <button (click)="volverAlHome()">Volver al Home</button>
-    </div>
+    <h3>Puntaje: {{ score }}</h3>
+    <h3>Pokémon adivinados: {{ correctGuesses }}</h3>
+    <h3>Nivel: {{ playerLevel }}</h3>
   }
-
-  <!-- Mensaje de plantarse -->
-  @if (isGameOver && score > 0) {
-    <h2>Te plantaste con {{ score }} puntos.</h2>
-    <p>Pokémon adivinados: {{ correctGuesses }}</p>
-    <div class="botones-accion">
-      <button (click)="reiniciar()">Volver a Jugar</button>
-      <button (click)="volverAlHome()">Volver al Home</button>
-    </div>
-  }
-
-  <h3>Puntaje: {{ score }}</h3>
-  <h3>Pokémon adivinados: {{ correctGuesses }}</h3>
-  <h3>Nivel: {{ playerLevel }}</h3>
 </div>

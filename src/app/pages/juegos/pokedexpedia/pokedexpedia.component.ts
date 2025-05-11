@@ -5,6 +5,7 @@ import { TimerService } from '../../../services/timer/timer.service';
 import { Subscription } from 'rxjs';
 import { PartidasPokedexpediaService } from '../../../services/partidas/pokedexpedia/partidas-pokedexpedia.service';
 
+//parametros de la partida
 const INITIAL_TIME = 7;
 const POKEMON_GENERATIONS = {
   GEN_1: { min: 1, max: 151 },
@@ -18,9 +19,16 @@ const POINTS_EASY = 100;
 const POINTS_INTERMEDIATE = 150;
 const POINTS_HARD = 200;
 
+const SD_TIME = 5;
+const SD_TOTAL_POKEMON = 1025;
+const SD_POINTS_PER_CORRECT = 100;
+
+// Resultado ahora guarda el modo de la partida
+type GameMode = 'Clasico' | 'Muerte Subita';
+
 @Component({
   selector: 'app-pokedexpedia',
-
+  imports: [],
   templateUrl: './pokedexpedia.component.html',
   styleUrls: ['./pokedexpedia.component.css'],
 })
@@ -31,6 +39,7 @@ export class PokedexpediaComponent implements OnInit, OnDestroy {
   private timerService = inject(TimerService);
   private partidasPokedexpediaService = inject(PartidasPokedexpediaService);
 
+  // Game state
   currentQuestion: any = null;
   score: number = 0;
   correctGuesses: number = 0;
@@ -41,14 +50,17 @@ export class PokedexpediaComponent implements OnInit, OnDestroy {
   private timerSubscription: Subscription | null = null;
   highestScore: number = 0;
 
-  ngOnInit(): void {
+  // Sleccion de modo
+  suddenDeathMode: boolean | null = null; 
+
+  ngOnInit(): void {}
+  ngOnDestroy(): void { this.unsubscribeFromTimer(); }
+
+  selectMode(sudden: boolean): void {
+    this.suddenDeathMode = sudden;
     this.resetGameState();
     this.subscribeToTimer();
     this.loadNextQuestion();
-  }
-
-  ngOnDestroy(): void {
-    this.unsubscribeFromTimer();
   }
 
   resetGameState(): void {
@@ -59,11 +71,12 @@ export class PokedexpediaComponent implements OnInit, OnDestroy {
     this.isGameOver = false;
     this.disabledOptions = [];
     this.timerService.detenerTemporizador();
+    this.currentQuestion = null;
   }
 
   loadNextQuestion(): void {
+    if (this.suddenDeathMode === null) return;
     const randomId = this.getRandomPokemonId();
-
     this.pokeApiService.getPokemon(randomId).subscribe(
       async (pokemon) => this.setupQuestion(pokemon),
       (error) => this.handleApiError(error, 'loadNextQuestion')
@@ -71,171 +84,111 @@ export class PokedexpediaComponent implements OnInit, OnDestroy {
   }
 
   private getRandomPokemonId(): number {
+    if (this.suddenDeathMode) return Math.floor(Math.random() * SD_TOTAL_POKEMON) + 1;
     const { min, max } = this.getPokemonIdRange();
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
   private async setupQuestion(pokemon: any): Promise<void> {
-    this.currentQuestion = {
-      image: pokemon.sprite,
-      correctAnswer: pokemon.name,
-      options: await this.generatePokemonOptions(pokemon.name),
-    };
+    this.currentQuestion = { image: pokemon.sprite, correctAnswer: pokemon.name, options: await this.generatePokemonOptions(pokemon.name) };
     this.isGuessed = false;
     this.disabledOptions = [];
     this.cdr.detectChanges();
-    this.timerService.iniciarTemporizador(INITIAL_TIME);
+    const time = this.suddenDeathMode ? SD_TIME : INITIAL_TIME;
+    this.timerService.iniciarTemporizador(time);
   }
 
   subscribeToTimer(): void {
-    this.timerSubscription = this.timerService.tiempoRestante$.subscribe((tiempo) => {
-      this.tiempoRestante = tiempo;
+    this.timerSubscription = this.timerService.tiempoRestante$.subscribe((t) => {
+      this.tiempoRestante = t;
       this.cdr.detectChanges();
-
-      if (tiempo === 0 && !this.isGameOver && this.currentQuestion) {
-        this.handleTimeOut();
-      }
+      if (t === 0 && !this.isGameOver && this.currentQuestion) this.handleTimeOut();
     });
   }
 
-  unsubscribeFromTimer(): void {
-    this.timerSubscription?.unsubscribe();
-    this.timerSubscription = null;
-  }
+  unsubscribeFromTimer(): void { this.timerSubscription?.unsubscribe(); this.timerSubscription = null; }
 
-  async generatePokemonOptions(correctName: string): Promise<string[]> {
-    const { min, max } = this.getPokemonIdRange();
+  private async generatePokemonOptions(correctName: string): Promise<string[]> {
     const options = new Set<string>([correctName]);
-
+    const minId = this.suddenDeathMode ? 1 : this.getPokemonIdRange().min;
+    const maxId = this.suddenDeathMode ? SD_TOTAL_POKEMON : this.getPokemonIdRange().max;
     while (options.size < 4) {
-      const randomId = Math.floor(Math.random() * (max - min + 1)) + min;
-      try {
-        const pokemon = await this.pokeApiService.getPokemon(randomId).toPromise();
-        options.add(pokemon.name);
-      } catch (error) {
-        this.handleApiError(error, 'generar opciones de Pokémon');
-      }
+      const id = Math.floor(Math.random() * (maxId - minId + 1)) + minId;
+      try { const poke = await this.pokeApiService.getPokemon(id).toPromise(); options.add(poke.name); }
+      catch {/* ignore */}
     }
-    return this.shuffleArray(Array.from(options));
+    return Array.from(options).sort(() => Math.random() - 0.5);
   }
 
-  shuffleArray(array: any[]): any[] {
-    return array.sort(() => Math.random() - 0.5);
-  }
+  checkAnswer(option: string): void { option === this.currentQuestion.correctAnswer ? this.handleCorrectAnswer() : this.handleIncorrectAnswer(option); }
 
-  checkAnswer(selectedOption: string): void {
-    if (selectedOption === this.currentQuestion.correctAnswer) {
-      this.handleCorrectAnswer();
-    } else {
-      this.handleIncorrectAnswer(selectedOption);
-    }
-  }
-
-  handleCorrectAnswer(): void {
-    let points = POINTS_EASY;
-
-    if (this.correctGuesses >= 10) {
-      points = POINTS_HARD;
-    } else if (this.correctGuesses >= 5) {
-      points = POINTS_INTERMEDIATE;
-    }
-
-    this.score += points;
-    this.correctGuesses++;
-    this.isGuessed = true;
+  private handleCorrectAnswer(): void {
     this.timerService.detenerTemporizador();
-
-    if (this.score > this.highestScore) {
-      this.highestScore = this.score;
+    if (this.suddenDeathMode) {
+      this.score += SD_POINTS_PER_CORRECT;
+      this.correctGuesses++;
+      this.isGuessed = true;
+      if (this.score > this.highestScore) this.highestScore = this.score;
+      setTimeout(() => this.loadNextQuestion(), 1000);
+    } else {
+      let p = this.correctGuesses >= 10 ? POINTS_HARD : this.correctGuesses >= 5 ? POINTS_INTERMEDIATE : POINTS_EASY;
+      this.score += p;
+      this.correctGuesses++;
+      this.isGuessed = true;
+      if (this.score > this.highestScore) this.highestScore = this.score;
     }
   }
 
-  handleIncorrectAnswer(selectedOption: string): void {
-    let penalty = PENALTY_EASY;
-
-    if (this.correctGuesses >= 10) {
-      penalty = PENALTY_HARD;
-    } else if (this.correctGuesses >= 5) {
-      penalty = PENALTY_INTERMEDIATE;
-    }
-
-    this.score -= penalty;
-    this.disabledOptions.push(selectedOption);
-
-    if (this.score <= -1) {
-      this.score = 0;
+  private handleIncorrectAnswer(option: string): void {
+    this.timerService.detenerTemporizador();
+    if (this.suddenDeathMode) {
       this.endGame();
+    } else {
+      let pen = this.correctGuesses >= 10 ? PENALTY_HARD : this.correctGuesses >= 5 ? PENALTY_INTERMEDIATE : PENALTY_EASY;
+      this.score -= pen;
+      this.disabledOptions.push(option);
+      if (this.score < 0) { this.score = 0; this.endGame(); }
     }
   }
 
-  handleTimeOut(): void {
-    this.score = 0;
-    this.endGame();
-    this.cdr.detectChanges();
-  }
+  private handleTimeOut(): void { this.timerService.detenerTemporizador(); this.endGame(); this.cdr.detectChanges(); }
 
-  continuar(): void {
-    this.loadNextQuestion();
-  }
+  continuar(): void { if (!this.suddenDeathMode) this.loadNextQuestion(); }
 
   plantarse(): void {
     this.isGameOver = true;
     this.timerService.detenerTemporizador();
-
-    const resultado = 'Victoria';
-    this.partidasPokedexpediaService.guardarPartida(this.score, this.correctGuesses, resultado)
-      .then(() => console.log('Partida guardada correctamente.'))
-      .catch((error) => this.handleApiError(error, 'guardar la partida'));
+    // siempre clasico en plantarse
+    this.persistResult();
   }
 
-  reiniciar(): void {
-    this.resetGameState();
-    this.loadNextQuestion();
-  }
+  reiniciar(): void { this.resetGameState(); this.subscribeToTimer(); this.loadNextQuestion(); }
 
-  endGame(): void {
+  private endGame(): void {
     this.isGameOver = true;
     this.isGuessed = false;
     this.timerService.detenerTemporizador();
-
-    const resultado = this.score > 0 ? 'Victoria' : 'Derrota';
-
-    this.partidasPokedexpediaService.guardarPartida(this.highestScore, this.correctGuesses, resultado)
-      .then(() => console.log('Partida guardada correctamente.'))
-      .catch((error) => this.handleApiError(error, 'guardar la partida'));
+    this.persistResult();
   }
 
-  volverAlHome(): void {
-    this.router.navigate(['/']);
+  private persistResult(): void {
+    const modo: GameMode = this.suddenDeathMode ? 'Muerte Subita' : 'Clasico';
+    this.partidasPokedexpediaService.guardarPartida(this.highestScore, this.correctGuesses, modo);
   }
 
-  private handleErrorState(): void {
-    this.isGameOver = true;
-    this.cdr.detectChanges();
-  }
+  volverAlHome(): void { this.router.navigate(['/']); }
 
   private getPokemonIdRange(): { min: number; max: number } {
-    if (this.correctGuesses >= 10) {
-      return POKEMON_GENERATIONS.GEN_9;
-    } else if (this.correctGuesses >= 5) {
-      return POKEMON_GENERATIONS.GEN_2_3;
-    } else {
-      return POKEMON_GENERATIONS.GEN_1;
-    }
+    if (this.correctGuesses >= 10) return POKEMON_GENERATIONS.GEN_9;
+    if (this.correctGuesses >= 5) return POKEMON_GENERATIONS.GEN_2_3;
+    return POKEMON_GENERATIONS.GEN_1;
   }
 
-  private handleApiError(error: any, context: string): void {
-    console.error(`Error en ${context}:`, error);
-    this.handleErrorState();
-  }
+  private handleApiError(error: any, ctx: string) { console.error(`Error en ${ctx}:`, error); this.isGameOver = true; this.cdr.detectChanges(); }
 
   get playerLevel(): string {
-    if (this.correctGuesses >= 10) {
-      return 'Difícil';
-    } else if (this.correctGuesses >= 5) {
-      return 'Intermedio';
-    } else {
-      return 'Fácil';
-    }
+    if (this.suddenDeathMode === null) return '';
+    if (this.suddenDeathMode) return 'Muerte Súbita';
+    return this.correctGuesses >= 10 ? 'Difícil' : this.correctGuesses >= 5 ? 'Intermedio' : 'Fácil';
   }
 }

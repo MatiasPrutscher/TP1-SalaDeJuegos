@@ -15,7 +15,7 @@ export class PartidasPokedexpediaService {
   async guardarPartida(
     puntos: number,
     pokemonsAdivinados: number,
-    resultado: 'Victoria' | 'Derrota'
+    resultado: 'Clasico' | 'Muerte Subita'
   ): Promise<void> {
     try {
       const usuarioId = await this.authService.obtenerIdUsuario();
