@@ -7,7 +7,7 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root',
 })
 export class AuthService {
-  private supabase: SupabaseClient;
+  public supabase: SupabaseClient;
   private isLoggedInSubject = new BehaviorSubject<boolean>(false);
   isLoggedIn$ = this.isLoggedInSubject.asObservable();
 
@@ -141,5 +141,20 @@ export class AuthService {
     }
 
     return usuario.id;
+  }
+
+  async obtenerNombreUsuario(usuarioId: number): Promise<string> {
+    const { data, error } = await this.supabase
+      .from('usuarios')
+      .select('nombre')
+      .eq('id', usuarioId)
+      .single();
+
+    if (error) {
+      console.error(`Error al obtener el nombre del usuario con ID ${usuarioId}:`, error.message);
+      return 'Desconocido'; // Valor por defecto si no se encuentra el usuario
+    }
+
+    return data?.nombre || 'Desconocido';
   }
 }

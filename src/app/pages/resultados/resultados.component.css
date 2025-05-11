@@ -1,0 +1,33 @@
+.resultados-container {
+  text-align: center;
+  font-family: 'Press Start 2P', cursive;
+  color: #d4a5ff;
+  padding: 20px;
+}
+
+.tabla-resultados {
+  margin: 20px auto;
+  max-width: 800px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th, td {
+  border: 1px solid #8a2be2;
+  padding: 10px;
+  text-align: center;
+}
+
+th {
+  background-color: #8a2be2;
+  color: white;
+}
+
+td {
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #d4a5ff;
+}

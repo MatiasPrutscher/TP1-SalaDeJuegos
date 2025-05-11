@@ -1,0 +1,47 @@
+<div class="resultados-container">
+  <h1>Resultados</h1>
+
+  @if (cargando) {
+    <p>Cargando resultados...</p>
+  } @else {
+    @for (juego of ['partidas_ahorcado', 'partidas_mayor_menor', 'partidas_galati', 'partidas_pokedexpedia']; track $index) {
+      <div class="tabla-resultados">
+        <h2>Resultados de {{ juego | titlecase }}</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Jugador</th>
+              <th>Puntaje</th>
+              <th>Detalles</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (!resultados[juego]?.length) {
+              <tr>
+                <td colspan="3">No hay resultados disponibles.</td>
+              </tr>
+            } @else {
+              @for (resultado of resultados[juego]; track resultado.id) {
+                <tr>
+                  <td>{{ resultado.jugador }}</td>
+                  <td>{{ resultado.puntos }}</td>
+                  <td>
+                    @if (juego === 'partidas_ahorcado') {
+                      Nivel: {{ resultado.nivel }}
+                    } @else if (juego === 'partidas_mayor_menor') {
+                      Cartas Acertadas: {{ resultado.cartas_acertadas }}
+                    } @else if (juego === 'partidas_galati') {
+                      Enemigos Destruidos: {{ resultado.enemigos_destruidos }}
+                    } @else if (juego === 'partidas_pokedexpedia') {
+                      Pokémon Adivinados: {{ resultado.pokemons_adivinados }}
+                    }
+                  </td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+</div>
