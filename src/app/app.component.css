@@ -140,7 +140,7 @@
   border-radius: 8px; /* Reducido de 10px a 8px */
 }
 
-@media (max-width: 600px) {
+@media (max-width: 800px) {
   .sidebar {
     width: 100vw;
     height: 100vh;

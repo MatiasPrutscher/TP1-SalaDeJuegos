@@ -221,7 +221,7 @@
   margin-right: 400px; /* Ajusta el margen cuando el chat está expandido */
 }
 
-@media (max-width: 600px) {
+@media (max-width: 800px) {
   .chat-sidebar {
     width: 0;
     left: 0;
