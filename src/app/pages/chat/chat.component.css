@@ -220,3 +220,51 @@
 .content.chat-desplegado {
   margin-right: 400px; /* Ajusta el margen cuando el chat está expandido */
 }
+
+@media (max-width: 600px) {
+  .chat-sidebar {
+    width: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 100vh;
+    max-width: 100vw;
+    z-index: 3000;
+    border-radius: 0;
+    transition: width 0.3s ease;
+    background-color: #333333 !important; 
+  }
+  .chat-sidebar.desplegado {
+    width: 100vw !important;
+    max-width: 100vw;
+    height: 100vh;
+    left: 0;
+    right: 0;
+    top: 0;
+    border-radius: 0;
+    z-index: 3000;
+    background-color: #333333 !important;
+  }
+  .mensajes,
+  .chat-header,
+  .input-container {
+    background-color: #333333 !important; 
+  }
+  .chat-header {
+    justify-content: center !important;
+    text-align: center !important;
+  }
+  .chat-header h3 {
+    width: 100%;
+    text-align: center !important;
+    margin-left: 0 !important;
+  }
+  .floating-button {
+    border-radius: 20%;
+    top: 2px;
+    left: 60px;
+    width: 40px;
+    height: 40px;
+    z-index: 4000;
+  }
+}
