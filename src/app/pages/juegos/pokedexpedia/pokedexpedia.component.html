@@ -21,7 +21,7 @@
 
     @if (currentQuestion && !isGuessed && !isGameOver) {
       <h2>¿Quién es este Pokémon?</h2>
-      <img [src]="currentQuestion.image" [class.shadow]="!isGuessed" alt="Pokémon" />
+      <img [src]="currentQuestion.image" draggable="false" [class.shadow]="!isGuessed" alt="Pokémon" class="pokemon-img" />
       <div class="options-container">
         @for (opt of currentQuestion.options; track $index) {
           <button [disabled]="disabledOptions.includes(opt)" (click)="checkAnswer(opt)">
@@ -33,7 +33,7 @@
 
     @if (isGuessed) {
       <h2>¡Correcto! Es {{ currentQuestion.correctAnswer }}</h2>
-      <img [src]="currentQuestion.image" alt="Pokémon" />
+      <img [src]="currentQuestion?.image" alt="Pokémon" draggable="false" class="pokemon-img" />
       @if (!suddenDeathMode) {
         <div class="botones-accion">
           <button (click)="continuar()">Continuar</button>

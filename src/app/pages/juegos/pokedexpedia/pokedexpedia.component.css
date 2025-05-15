@@ -50,6 +50,7 @@ button {
   
   /* Imagen del Pokémon */
   .preguntados-container img {
+    pointer-events: none;
     width: 150px;
     height: auto;
     margin: 20px 0;
@@ -58,6 +59,12 @@ button {
     display: block;
     margin-left: auto;
     margin-right: auto;
+    -webkit-user-drag: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    pointer-events: none; 
   }
   
   /* Contenedor de botones en cuadrícula */
@@ -149,4 +156,14 @@ button {
   background-color: #373535;
   text-shadow: 2px 2px 0px #000, 4px 4px 0px #6b00b6;
   transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Imagen del Pokémon sin interacción */
+.pokemon-img {
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  pointer-events: none; 
 }

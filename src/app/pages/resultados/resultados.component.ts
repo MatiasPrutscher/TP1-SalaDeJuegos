@@ -1,10 +1,11 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ResultadosService } from '../../services/resultados/resultados.service';
 import { CommonModule } from '@angular/common';
+import { NombreJuegoPipe } from '../../pipes/nombre-juego.pipe';
 
 @Component({
   selector: 'app-resultados',
-  imports: [CommonModule],
+  imports: [CommonModule, NombreJuegoPipe],
   templateUrl: './resultados.component.html',
   styleUrls: ['./resultados.component.css'],
 })

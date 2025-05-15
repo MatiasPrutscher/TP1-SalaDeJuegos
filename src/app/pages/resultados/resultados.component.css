@@ -5,9 +5,35 @@
   padding: 20px;
 }
 
+.resultados-container h1 {
+  background: linear-gradient(90deg, #8a2be2 60%, #d4a5ff 100%);
+  color: #fff;
+  border-radius: 12px;
+  padding: 18px 0;
+  margin-bottom: 32px;
+  font-size: 2.5em;
+  box-shadow: 0 4px 24px #8a2be288;
+  border: 2px solid #8a2be2;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 12px #000a;
+}
+
 .tabla-resultados {
   margin: 20px auto;
   max-width: 800px;
+}
+
+.tabla-resultados h2 {
+  background: linear-gradient(90deg, #8a2be2 60%, #d4a5ff 100%);
+  color: #fff;
+  border-radius: 10px;
+  padding: 16px 0;
+  margin: 32px 0 16px 0;
+  font-size: 1.6em;
+  box-shadow: 0 4px 16px #8a2be288;
+  border: 2px solid #8a2be2;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 8px #000a;
 }
 
 table {
@@ -30,4 +56,20 @@ th {
 td {
   background-color: rgba(0, 0, 0, 0.8);
   color: #d4a5ff;
+}
+
+.carga{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 25vh;
+  border: 2px solid #8a2be2;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #d4a5ff;
+  border-radius: 12px;
+  box-shadow: 0 0 20px #8a2be288;
+  max-width: 400px;
+  margin: 40px auto;
+  font-size: 1.2em;
+  padding: 40px 20px;
 }
