@@ -1,0 +1,13 @@
+{
+  "headers": [
+    {
+      "source": "/manifest.webmanifest",
+      "headers": [
+        { "key": "Content-Type", "value": "application/manifest+json" }
+      ]
+    }
+  ],
+  "rewrites": [
+    { "source": "/manifest.webmanifest", "destination": "/manifest.webmanifest" }
+  ]
+}
